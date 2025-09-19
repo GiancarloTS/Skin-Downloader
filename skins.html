@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+        background: #181a20;
+        color: #e0e0e0;
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+      .bg-dark-custom {
+        background: #23272f !important;
+      }
+      .btn-gold {
+        background: #f5c518;
+        color: #23272f;
+        border: none;
+        font-weight: bold;
+      }
+      .btn-gold:hover {
+        background: #ffe066;
+        color: #181a20;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark-custom " style="border-radius:10px;">
+      <div class="container-fluid position-relative justify-content-center">
+        <button id="backBtn" class="btn btn-gold position-absolute start-0" style="left: 1px;">← Volver</button>
+        <span id="navbarTitle" class="navbar-brand fw-bold mx-auto text-center w-100" style="color:#f5c518; font-size:2.4rem;">Skins de Ahri</span>
+      </div>
+    </nav>
+    <div class="container min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+      <div id="carouselContainer" class="mt-1 d-flex flex-column align-items-center w-100"></div>
+    </div>
+    <script>
+      // Obtener parámetros de campeón por querystring
+      // Normaliza el nombre igual que en index.html
+      function normalizeChampionName(name) {
+        return name
+          .toLowerCase()
+          .replace(/á/g, 'a')
+          .replace(/é/g, 'e')
+          .replace(/í/g, 'i')
+          .replace(/ó/g, 'o')
+          .replace(/ú/g, 'u')
+          .replace(/ñ/g, 'n')
+          .replace(/[^a-z0-9]/g, '');
+      }
+      // Busca el nombre real del campeón a partir del nombre normalizado
+      function getChampionFromQuery() {
+        const params = new URLSearchParams(window.location.search);
+        const champNorm = params.get('champion');
+        if (!champNorm) return null;
+        // Buscar el nombre real en el diccionario champIdMap, comparando normalizados
+        for (const realName in champIdMap) {
+          if (normalizeChampionName(realName) === champNorm || normalizeChampionName(realName) === normalizeChampionName(champNorm)) {
+            return realName;
+          }
+        }
+        return null;
+      }
+      // Diccionario nombre -> id
+      const champIdMap = {
+        "Aatrox":266,"Ahri":103,"Akali":84,"Akshan":166,"Alistar":12,"Ambessa":799,"Amumu":32,"Anivia":34,"Annie":1,"Aphelios":523,"Ashe":22,"Aurelion Sol":136,"Aurora":893,"Azir":268,"Bard":432,"Bel'Veth":200,"Blitzcrank":53,"Brand":63,"Braum":201,"Briar":233,"Caitlyn":51,"Camille":164,"Cassiopeia":69,"Cho'Gath":31,"Corki":42,"Darius":122,"Diana":131,"Draven":119,"Dr. Mundo":36,"Ekko":245,"Elise":60,"Evelynn":28,"Ezreal":81,"Fiddlesticks":9,"Fiora":114,"Fizz":105,"Galio":3,"Gangplank":41,"Garen":86,"Gnar":150,"Gragas":79,"Graves":104,"Gwen":887,"Hecarim":120,"Heimerdinger":74,"Hwei":910,"Illaoi":420,"Irelia":39,"Ivern":427,"Janna":40,"Jarvan IV":59,"Jax":24,"Jayce":126,"Jhin":202,"Jinx":222,"Kai'Sa":145,"Kalista":429,"Karma":43,"Karthus":30,"Kassadin":38,"Katarina":55,"Kayle":10,"Kayn":141,"Kennen":85,"Kha'Zix":121,"Kindred":203,"Kled":240,"Kog'Maw":96,"K'Sante":897,"LeBlanc":7,"Lee Sin":64,"Leona":89,"Lillia":876,"Lissandra":127,"Lucian":236,"Lulu":117,"Lux":99,"Malphite":54,"Malzahar":90,"Maokai":57,"Master Yi":11,"Mel":800,"Milio":902,"Miss Fortune":21,"Wukong":62,"Mordekaiser":82,"Morgana":25,"Naafiri":950,"Nami":267,"Nasus":75,"Nautilus":111,"Neeko":518,"Nidalee":76,"Nilah":895,"Nocturne":56,"Nunu":20,"Olaf":2,"Orianna":61,"Ornn":516,"Pantheon":80,"Poppy":78,"Pyke":555,"Qiyana":246,"Quinn":133,"Rakan":497,"Rammus":33,"Rek'Sai":421,"Rell":526,"Renata":888,"Renekton":58,"Rengar":107,"Riven":92,"Rumble":68,"Ryze":13,"Samira":360,"Sejuani":113,"Senna":235,"Seraphine":147,"Sett":875,"Shaco":35,"Shen":98,"Shyvana":102,"Singed":27,"Sion":14,"Sivir":15,"Skarner":72,"Smolder":901,"Sona":37,"Soraka":16,"Swain":50,"Sylas":517,"Syndra":134,"Tahm Kench":223,"Taliyah":163,"Talon":91,"Taric":44,"Teemo":17,"Thresh":412,"Tristana":18,"Trundle":48,"Tryndamere":23,"Twisted Fate":4,"Twitch":29,"Udyr":77,"Urgot":6,"Varus":110,"Vayne":67,"Veigar":45,"Vel'Koz":161,"Vex":711,"Vi":254,"Viego":234,"Viktor":112,"Vladimir":8,"Volibear":106,"Warwick":19,"Xayah":498,"Xerath":101,"Xin Zhao":5,"Yasuo":157,"Yone":777,"Yorick":83,"Yunara":804,"Yuumi":350,"Zac":154,"Zed":238,"Zeri":221,"Ziggs":115,"Zilean":26,"Zoe":142,"Zyra":143
+      };
+      async function loadSkins() {
+        const champion = getChampionFromQuery();
+        const container = document.getElementById("carouselContainer");
+        const navbarTitle = document.getElementById("navbarTitle");
+        if (!champion) {
+          container.innerHTML = '<div class="text-danger text-center">No se especificó campeón.</div>';
+          navbarTitle.textContent = '';
+          return;
+        }
+        navbarTitle.textContent = `Skins de ${champion}`;
+        container.innerHTML = `<div class='text-warning text-center'>Cargando skins...</div>`;
+        // Obtener ID del campeón
+        let champId = champIdMap[champion];
+        if (!champId) {
+          container.innerHTML = `<div class='text-danger text-center'>No se encontró la ID del campeón.</div>`;
+          return;
+        }
+        // Descargar JSON del campeón
+        let champData;
+        try {
+          const res = await fetch(`https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champions/${champId}.json`);
+          champData = await res.json();
+        } catch {
+          container.innerHTML = `<div class='text-danger text-center'>No se pudo obtener la información del campeón.</div>`;
+          return;
+        }
+        // Obtener skins reales del repositorio GitHub
+        const repoSkins = await window.skinsAPI.getSkins(champion);
+        if (!repoSkins.length) {
+          container.innerHTML = `<h3 class='text-center'>Skins de ${champion}</h3><p class='text-center'>No hay skins .zip disponibles.</p>`;
+          return;
+        }
+        // Verificar disponibilidad de chromas
+        const chromasAvailable = {};
+        await Promise.all(repoSkins.map(async skin => {
+          const chromaApiUrl = `https://api.github.com/repos/lingyRTX/lol-skins/contents/skins/${champion}/chromas/${skin.name.replace(/\.zip$/i, '')}`;
+          try {
+            const res = await fetch(chromaApiUrl);
+            chromasAvailable[skin.name] = res.ok;
+          } catch {
+            chromasAvailable[skin.name] = false;
+          }
+        }));
+        // Carrusel 3D con archivos zip reales
+        let current = 0;
+        const max = repoSkins.length;
+        container.innerHTML = `
+          <h3 class='text-center mb-4'>Skins de ${champion}</h3>
+          <div id='carousel3d' class='d-flex justify-content-center align-items-center position-relative' style='width:700px;height:480px;'>
+            <button id='prevBtn' class='btn btn-gold' style='position:absolute;left:10px;top:50%;transform:translateY(-50%);z-index:10;font-size:2.5rem;width:56px;height:56px;border-radius:50%;box-shadow:0 2px 8px #0006;opacity:0.95;display:flex;align-items:center;justify-content:center;'>&#8592;</button>
+            <div id='cardsWrapper' class='d-flex justify-content-center align-items-center' style='width:100%;height:100%;position:relative;'></div>
+            <button id='nextBtn' class='btn btn-gold' style='position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:10;font-size:2.5rem;width:56px;height:56px;border-radius:50%;box-shadow:0 2px 8px #0006;opacity:0.95;display:flex;align-items:center;justify-content:center;'>&#8594;</button>
+          </div>
+          <div id='carouselDots' class='d-flex justify-content-center mt-3'></div>
+        `;
+        const cardsWrapper = container.querySelector('#cardsWrapper');
+        const prevBtn = container.querySelector('#prevBtn');
+        const nextBtn = container.querySelector('#nextBtn');
+        const dots = container.querySelector('#carouselDots');
+
+        function renderCarousel() {
+          cardsWrapper.innerHTML = '';
+          dots.innerHTML = '';
+          let visible = [];
+          for (let i = -2; i <= 2; i++) {
+            let idx = (current + i + max) % max;
+            visible.push({skin: repoSkins[idx], pos: i});
+          }
+          visible.forEach(({skin, pos}, i) => {
+            const card = document.createElement('div');
+            card.className = 'bg-dark-custom shadow rounded d-flex flex-column align-items-center justify-content-between';
+            card.style.width = '340px';
+            card.style.height = '420px';
+            card.style.position = 'absolute';
+            card.style.left = `calc(50% + ${pos*180}px - 170px)`;
+            card.style.top = '20px';
+            let scale = pos === 0 ? 1 : 0.8;
+            let imgHeight = pos === 0 ? 300 : 220;
+            let opacity = Math.abs(pos)>2 ? 0 : (pos===0?1:0.6);
+            card.style.transform = `scale(${scale}) rotateY(${pos*25}deg)`;
+            card.style.zIndex = `${5-Math.abs(pos)}`;
+            card.style.transition = 'all 0.5s cubic-bezier(.4,2,.3,1)';
+            card.style.boxShadow = pos===0 ? '0 8px 32px #0008' : '0 2px 8px #0003';
+            card.style.opacity = opacity;
+            // Imagen: usar splash de CommunityDragon si existe, si no, icono genérico
+            let splashUrl = '';
+            if (champData && champData.skins) {
+              // Buscar skin por nombre (sin .zip), con normalización flexible
+              function normalizeName(str) {
+                return str
+                  .replace(/\.zip$/i, '')
+                  .replace(/[_\-]/g, ' ')
+
+                  .replace(/k\s*da/gi, 'kda')
+                  .replace(/\s+/g, ' ')
+                  .replace(/[^a-z0-9 ]/gi, '')
+                  .toLowerCase()
+                  .trim();
+              }
+              let skinNameNorm = normalizeName(skin.name);
+              let cdSkin = champData.skins.find(s => normalizeName(s.name) === skinNameNorm);
+              if (!cdSkin) {
+                // Match parcial si no hay exacto
+                cdSkin = champData.skins.find(s => normalizeName(s.name).includes(skinNameNorm) || skinNameNorm.includes(normalizeName(s.name)));
+              }
+              if (cdSkin && cdSkin.splashPath) {
+                splashUrl = 'https://raw.communitydragon.org/latest' + cdSkin.splashPath.replace('/lol-game-data/assets/ASSETS/', '/plugins/rcp-be-lol-game-data/global/default/assets/').toLowerCase();
+              }
+            }
+            if (!splashUrl) splashUrl = 'https://static.wikia.nocookie.net/leagueoflegends/images/6/6e/Champion.png';
+            const img = document.createElement('img');
+            img.src = splashUrl;
+            img.alt = skin.name;
+            img.style.width = '100%';
+            img.style.height = imgHeight + 'px';
+            img.style.objectFit = 'cover';
+            img.style.borderTopLeftRadius = '16px';
+            img.style.borderTopRightRadius = '16px';
+            img.style.transition = 'height 0.5s cubic-bezier(.4,2,.3,1)';
+            img.onerror = function(){img.src='https://static.wikia.nocookie.net/leagueoflegends/images/6/6e/Champion.png';};
+            card.appendChild(img);
+            // Nombre
+            const name = document.createElement('div');
+            name.textContent = skin.name.replace(/\.zip$/i, '');
+            name.style.color = '#e0e0e0';
+            name.style.fontWeight = pos===0 ? 'bold' : 'normal';
+            name.style.fontSize = pos===0 ? '1.3rem' : '1.1rem';
+            name.className = 'text-center mb-2 mt-2';
+            card.appendChild(name);
+            // Botón
+            const btn = document.createElement('button');
+            btn.textContent = 'Descargar';
+            btn.className = 'btn btn-gold mb-3 px-4 py-2';
+            btn.style.fontSize = '1.1rem';
+            btn.onclick = async () => {
+              btn.disabled = true;
+              btn.textContent = 'Descargando...';
+              try {
+                await window.skinsAPI.downloadSkin(skin.download_url, skin.name);
+                btn.textContent = 'Descargado';
+              } catch (e) {
+                btn.textContent = 'Error';
+                alert('Error al descargar: ' + e.message);
+              }
+              setTimeout(() => {
+                btn.disabled = false;
+                btn.textContent = 'Descargar';
+              }, 2000);
+            };
+            card.appendChild(btn);
+            // Botón para ver chromas
+            if (chromasAvailable[skin.name]) {
+              const chromaBtn = document.createElement('button');
+              chromaBtn.textContent = 'Ver chromas';
+              chromaBtn.className = 'btn btn-secondary mb-2';
+              chromaBtn.onclick = async () => {
+                chromaBtn.disabled = true;
+                chromaBtn.textContent = 'Cargando chromas...';
+                // Construir la URL de la carpeta de chromas para esta skin
+                const chromaApiUrl = `https://api.github.com/repos/lingyRTX/lol-skins/contents/skins/${champion}/chromas/${skin.name.replace(/\.zip$/i, '')}`;
+                try {
+                  const res = await fetch(chromaApiUrl);
+                  if (!res.ok) throw new Error('No hay chromas para esta skin.');
+                  const files = await res.json();
+                  // Buscar README.md y archivos .zip
+                  const readme = files.find(f => f.name.toLowerCase() === 'readme.md');
+                  const chromaZips = files.filter(f => f.name.toLowerCase().endsWith('.zip'));
+                  let chromaImages = [];
+                  if (readme) {
+                    const readmeRes = await fetch(readme.download_url);
+                    const readmeText = await readmeRes.text();
+                    // Extraer la tabla markdown de imágenes (primera tabla encontrada)
+                    const tableMatch = readmeText.match(/\|(.|\n)*?\|\n/g);
+                    if (tableMatch) {
+                      // Parsear la tabla a filas
+                      const rows = tableMatch[0].trim().split('\n').slice(2); // Saltar cabecera y separador
+                      chromaImages = rows.map(row => {
+                        const cols = row.split('|').map(c => c.trim());
+                        // Preview: columna 1 (cols[1]), Chroma ID: columna 2 (cols[2]), Name: columna 3 (cols[3])
+                        const imgMatch = cols[1] && cols[1].match(/!\[.*?\]\((.*?)\)/);
+                        return {
+                          id: cols[2],
+                          name: cols[3],
+                          img: imgMatch ? imgMatch[1] : null
+                        };
+                      });
+                    }
+                  }
+                  // Mostrar modal con lista de chromas
+                  showChromasModal(skin.name.replace(/\.zip$/i, ''), chromaZips, chromaImages);
+                } catch (e) {
+                  alert(e.message || 'No hay chromas para esta skin.');
+                }
+                chromaBtn.disabled = false;
+                chromaBtn.textContent = 'Ver chromas';
+              };
+              card.appendChild(chromaBtn);
+            }
+            cardsWrapper.appendChild(card);
+          });
+          // Dots
+          for(let i=0;i<max;i++){
+            const dot=document.createElement('span');
+            dot.style.width='12px';
+            dot.style.height='12px';
+            dot.style.borderRadius='50%';
+            dot.style.margin='0 4px';
+            dot.style.display='inline-block';
+            dot.style.background=i===current?'#f5c518':'#444';
+            dot.style.cursor='pointer';
+            dot.onclick=()=>{current=i;renderCarousel();};
+            dots.appendChild(dot);
+          }
+        }
+        prevBtn.onclick = () => {
+          current = (current - 1 + max) % max;
+          renderCarousel();
+        };
+        nextBtn.onclick = () => {
+          current = (current + 1) % max;
+          renderCarousel();
+        };
+        renderCarousel(chromasAvailable);
+      }
+      document.getElementById("backBtn").addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+      loadSkins();
+    </script>
+<!-- Modal para chromas -->
+<div class="modal fade" id="chromasModal" tabindex="-1" aria-labelledby="chromasModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content bg-dark-custom text-light">
+      <div class="modal-header">
+        <h5 class="modal-title" id="chromasModalLabel">Chromas</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body" id="chromasModalBody">
+        <!-- Aquí se cargan los chromas -->
+      </div>
+    </div>
+  </div>
+</div>  
+<script>
+function showChromasModal(skinName, chromaZips, chromaImages) {
+  const body = document.getElementById('chromasModalBody');
+  let html = `<h5 class="mb-3">${skinName} - Chromas</h5>`;
+  if (!chromaZips.length) {
+    html += `<div class="text-warning">No hay chromas disponibles.</div>`;
+  } else {
+    html += `<div class="row">`;
+    chromaZips.forEach(zip => {
+      // Extrae el Chroma ID del nombre del zip (ej: "Mecha Aatrox 266004.zip")
+      const idMatch = zip.name.match(/(\d+)\.zip$/);
+      let img = '';
+      if (idMatch && chromaImages && chromaImages.length) {
+        const found = chromaImages.find(c => c.id === idMatch[1]);
+        if (found && found.img) img = `<img src="${found.img}" alt="${zip.name}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;" class="mb-2 d-block mx-auto">`;
+      }
+      html += `
+        <div class="col-6 col-md-4 col-lg-3 text-center mb-3">
+          ${img}
+          <div style="font-size:0.95rem;">${zip.name.replace(/\.zip$/i, '')}</div>
+          <a href="${zip.download_url}" class="btn btn-gold btn-sm mt-1" target="_blank" download>Descargar</a>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  }
+  body.innerHTML = html;
+  const modal = new bootstrap.Modal(document.getElementById('chromasModal'));
+  modal.show();
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Al cargar la página, pasar el token guardado a preload.js
+  const savedToken = localStorage.getItem("github_token");
+  if (savedToken) window.skinsAPI.setToken(savedToken);
+</script>
+</body>
+</html>
