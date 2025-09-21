@@ -1,0 +1,14 @@
+{
+  "Ahri": {
+    "skin": "KDA ALL OUT",
+    "descripcion": "No funciona la descarga de esta skin por error en el zip."
+  },
+  "Yasuo": {
+    "skin": "PROYECTO",
+    "descripcion": "El archivo está corrupto, no se puede extraer."
+  },
+  "Lux": {
+    "skin": "Elementalista",
+    "descripcion": "Faltan archivos en el zip, la skin no se instala correctamente."
+  }
+}

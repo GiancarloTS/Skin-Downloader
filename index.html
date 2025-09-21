@@ -534,9 +534,22 @@
             col.className =
               "col-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center";
             const card = document.createElement("div");
-            card.className = "champion-card card bg-dark-custom border-0 mb-2";
+            card.className = "champion-card card bg-dark-custom border-0 mb-2 position-relative";
             card.style.width = "180px";
             card.style.cursor = "pointer";
+
+            // ALERTA DE ADVERTENCIA
+            const statusData = window.skinsAPI.getChampionStatus();
+            if (statusData && statusData[name]) {
+              const alertDiv = document.createElement("div");
+              alertDiv.className = "alert alert-warning p-2 position-absolute top-0 end-0 m-2";
+              alertDiv.style.zIndex = 10;
+              let warnings = statusData[name];
+              if (!Array.isArray(warnings)) warnings = [warnings];
+              alertDiv.innerHTML = warnings.map(w => `<b>${w.skin}</b>: ${w.descripcion}`).join('<br><br>');
+              card.appendChild(alertDiv);
+            }
+
             const img = document.createElement("img");
             img.src = loadscreenUrl;
             img.alt = name;
