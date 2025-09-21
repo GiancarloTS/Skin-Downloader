@@ -8,7 +8,8 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "electron-builder"
   },
   "devDependencies": {
     "electron": "^38.1.2",
@@ -18,11 +19,16 @@
     "adm-zip": "^0.5.16"
   },
   "build": {
-    "asar": true,
+    "appId": "com.tuapp.skindownloader",
+    "productName": "skins-downloader",
+    "files": [
+      "**/*"
+    ],
     "win": {
-      "target": "portable",
-      "icon": "icon.png",
-      "signAndEditExecutable": false
+      "target": [
+        "nsis",
+        "portable"
+      ]
     }
   }
 }
