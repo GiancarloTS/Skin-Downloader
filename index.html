@@ -111,7 +111,15 @@
         </div>
       </div>
       <h2 class="text-center fw-bold" style="color: #f5c518">Campeones</h2>
-      <div class="d-flex justify-content-center mb-2">
+      <div class="d-flex flex-column align-items-center mb-2">
+        <div id="roleFilters" class="mb-2">
+          <button class="btn btn-gold me-2 mb-1" data-role="all">Todos</button>
+          <button class="btn btn-gold me-2 mb-1" data-role="top">Top</button>
+          <button class="btn btn-gold me-2 mb-1" data-role="jg">JG</button>
+          <button class="btn btn-gold me-2 mb-1" data-role="mid">Mid</button>
+          <button class="btn btn-gold me-2 mb-1" data-role="adc">ADC</button>
+          <button class="btn btn-gold me-2 mb-1" data-role="supp">Supp</button>
+        </div>
         <input
           id="championSearch"
           type="text"
@@ -125,12 +133,21 @@
     </div>
 
     <script>
+      // PASO CRÍTICO: pasar el token antes de cualquier fetch
+      const savedToken = localStorage.getItem("github_token");
+      if (savedToken) window.skinsAPI.setToken(savedToken);
+
       // Mostrar grid de campeones
 
       // El div #skinsList ya está en el HTML
 
+      // Diccionario de roles por campeón (puedes ajustar según tus necesidades)
+      const championRoles = {
+        "Aatrox": ["top"], "Ahri": ["mid"], "Akali": ["top","mid"], "Akshan": ["mid","adc"], "Alistar": ["supp"], "Amumu": ["jg","supp"], "Anivia": ["mid"], "Annie": ["mid","supp"], "Aphelios": ["adc"], "Ashe": ["adc","supp"], "Aurelion Sol": ["mid"], "Azir": ["mid"], "Bard": ["supp"], "Bel'Veth": ["jg"], "Blitzcrank": ["supp"], "Brand": ["mid","supp"], "Braum": ["supp"], "Briar": ["jg"], "Caitlyn": ["adc"], "Camille": ["top"], "Cassiopeia": ["mid"], "Cho'Gath": ["top","mid"], "Corki": ["mid"], "Darius": ["top"], "Diana": ["mid","jg"], "Draven": ["adc"], "Dr. Mundo": ["top","jg"], "Ekko": ["mid","jg"], "Elise": ["jg"], "Evelynn": ["jg"], "Ezreal": ["adc"], "Fiddlesticks": ["jg","supp"], "Fiora": ["top"], "Fizz": ["mid","jg"], "Galio": ["mid","supp","top"], "Gangplank": ["top"], "Garen": ["top"], "Gnar": ["top"], "Gragas": ["top","jg","mid"], "Graves": ["jg","top"], "Gwen": ["top"], "Hecarim": ["jg"], "Heimerdinger": ["mid","supp"], "Hwei": ["mid"], "Illaoi": ["top"], "Irelia": ["top","mid"], "Ivern": ["jg"], "Janna": ["supp"], "Jarvan IV": ["jg","top"], "Jax": ["top","jg"], "Jayce": ["top","mid"], "Jhin": ["adc"], "Jinx": ["adc"], "Kai'Sa": ["adc"], "Kalista": ["adc"], "Karma": ["supp","mid"], "Karthus": ["jg","mid"], "Kassadin": ["mid"], "Katarina": ["mid"], "Kayle": ["top","mid"], "Kayn": ["jg"], "Kennen": ["top","mid"], "Kha'Zix": ["jg"], "Kindred": ["jg","adc"], "Kled": ["top"], "Kog'Maw": ["adc"], "LeBlanc": ["mid"], "Lee Sin": ["jg","top"], "Leona": ["supp","top"], "Lillia": ["jg","top"], "Lissandra": ["mid"], "Lucian": ["adc","mid"], "Lulu": ["supp"], "Lux": ["mid","supp"], "Malphite": ["top","mid"], "Malzahar": ["mid"], "Maokai": ["top","supp","jg"], "Master Yi": ["jg"], "Milio": ["supp"], "Miss Fortune": ["adc","supp"], "Mordekaiser": ["top"], "Morgana": ["supp","mid"], "Naafiri": ["mid"], "Nami": ["supp"], "Nasus": ["top","jg"], "Nautilus": ["supp","top"], "Neeko": ["mid","supp","top"], "Nidalee": ["jg","mid"], "Nilah": ["adc"], "Nocturne": ["jg","mid","top"], "Nunu y Willump": ["jg"], "Olaf": ["top","jg"], "Orianna": ["mid"], "Ornn": ["top"], "Pantheon": ["top","supp","mid"], "Poppy": ["top","jg","supp"], "Pyke": ["supp","mid"], "Qiyana": ["mid","jg"], "Quinn": ["top","adc"], "Rakan": ["supp"], "Rammus": ["jg","top"], "Rek'Sai": ["jg"], "Rell": ["supp","jg"], "Renata": ["supp"], "Renekton": ["top"], "Rengar": ["jg","top"], "Riven": ["top"], "Rumble": ["top","mid"], "Ryze": ["mid","top"], "Samira": ["adc"], "Sejuani": ["jg","top"], "Senna": ["supp","adc"], "Seraphine": ["supp","mid"], "Sett": ["top","mid"], "Shaco": ["jg","supp"], "Shen": ["top"], "Shyvana": ["jg","top"], "Singed": ["top"], "Sion": ["top"], "Sivir": ["adc"], "Skarner": ["jg","top"], "Smolder": ["adc"], "Sona": ["supp"], "Soraka": ["supp"], "Swain": ["mid","supp","top"], "Sylas": ["mid","top","jg"], "Syndra": ["mid"], "Tahm Kench": ["supp","top"], "Taliyah": ["mid","jg"], "Talon": ["mid","jg"], "Taric": ["supp","top"], "Teemo": ["top"], "Thresh": ["supp"], "Tristana": ["adc","mid"], "Trundle": ["jg","top"], "Tryndamere": ["top","mid"], "Twisted Fate": ["mid"], "Twitch": ["adc","jg"], "Udyr": ["jg","top"], "Urgot": ["top"], "Varus": ["adc","mid"], "Vayne": ["adc","top"], "Veigar": ["mid","supp"], "Vel'Koz": ["supp","mid"], "Vex": ["mid"], "Vi": ["jg","top"], "Viego": ["jg","top"], "Viktor": ["mid"], "Vladimir": ["mid","top"], "Volibear": ["top","jg"], "Warwick": ["jg","top"], "Wukong": ["top","jg"], "Xayah": ["adc"], "Xerath": ["mid","supp"], "Xin Zhao": ["jg","top"], "Yasuo": ["mid","top"], "Yone": ["mid","top"], "Yorick": ["top"], "Yuumi": ["supp"], "Zac": ["jg","top"], "Zed": ["mid","top"], "Zeri": ["adc"], "Ziggs": ["mid","adc"], "Zilean": ["supp","mid"], "Zoe": ["mid"], "Zyra": ["supp","mid"]
+      };
       let championsCache = [];
-      async function loadChampions(search = "") {
+      let currentRole = "all";
+      async function loadChampions(search = "", role = "all") {
         const grid = document.getElementById("championsGrid");
         grid.innerHTML = "<p>Cargando...</p>";
         try {
@@ -480,10 +497,16 @@
           // ...fin del objeto loadscreenMap correctamente definido...
 
           // ...fin del objeto loadscreenMap correctamente definido...
-          // Filtrar campeones por búsqueda
-          const champions = championsCache.filter((name) =>
+          // Filtrar campeones por búsqueda y rol
+          let champions = championsCache.filter((name) =>
             name.toLowerCase().includes(search.toLowerCase())
           );
+          if (role !== "all") {
+            champions = champions.filter((name) => {
+              const roles = championRoles[name] || [];
+              return roles.includes(role);
+            });
+          }
           grid.innerHTML = "";
           // Función para normalizar nombres de campeón para la URL
           function normalizeChampionName(name) {
@@ -539,14 +562,25 @@
         }
       }
 
-      // Inicializar y conectar barra de búsqueda
+      // Inicializar y conectar barra de búsqueda y botones de rol
       document.addEventListener("DOMContentLoaded", () => {
         const searchInput = document.getElementById("championSearch");
         if (searchInput) {
           searchInput.addEventListener("input", (e) => {
-            loadChampions(e.target.value);
+            loadChampions(e.target.value, currentRole);
           });
         }
+        // Botones de filtro de rol
+        document.querySelectorAll('#roleFilters button').forEach(btn => {
+          btn.addEventListener('click', function() {
+            document.querySelectorAll('#roleFilters button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentRole = this.getAttribute('data-role');
+            loadChampions(searchInput.value, currentRole);
+          });
+        });
+        // Marcar "Todos" como activo al inicio
+        document.querySelector('#roleFilters button[data-role="all"]').classList.add('active');
         loadChampions();
       });
 
