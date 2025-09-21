@@ -1,17 +1,5 @@
 
-const { contextBridge } = require('electron');
-const { ipcRenderer } = require('electron');
-const fs = require('fs');
-const path = require('path');
-function getChampionStatus() {
-	const filePath = path.join(__dirname, 'skin_status.json');
-	try {
-		const data = fs.readFileSync(filePath, 'utf8');
-		return JSON.parse(data);
-	} catch (e) {
-		return {};
-	}
-}
+const { contextBridge, ipcRenderer } = require('electron');
 
 let githubToken = null; // Token dinámico
 
@@ -74,10 +62,10 @@ contextBridge.exposeInMainWorld('skinsAPI', {
 	async downloadSkin(url, filename) {
 		return ipcRenderer.invoke('download-skin', url, filename);
 	},
-		async changeDownloadDir() {
-			return ipcRenderer.invoke('select-download-dir');
-		},
-		getChampionStatus() {
-			return getChampionStatus();
-		}
+	async changeDownloadDir() {
+		return ipcRenderer.invoke('select-download-dir');
+	},
+	async getChampionStatus() {
+		return await ipcRenderer.invoke('get-champion-status');
+	}
 	});

@@ -1,8 +1,20 @@
+
 const AdmZip = require('adm-zip');
 const { app, BrowserWindow, dialog, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const https = require('https');
+
+// Handler para exponer skin_status.json (debe ir después de require)
+ipcMain.handle('get-champion-status', async () => {
+  try {
+    const filePath = path.join(__dirname, 'skin_status.json');
+    const data = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(data);
+  } catch (e) {
+    return {};
+  }
+});
 
 let CONFIG_PATH;
 let mainWindow;
@@ -116,8 +128,18 @@ app.whenReady().then(() => {
     }
     return null;
   });
-});
 
+  // Mover aquí el handler de status
+  ipcMain.handle('get-champion-status', async () => {
+    try {
+      const filePath = path.join(__dirname, 'skin_status.json');
+      const data = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(data);
+    } catch (e) {
+      return {};
+    }
+  });
+});
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();

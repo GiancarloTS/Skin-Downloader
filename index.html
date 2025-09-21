@@ -181,6 +181,8 @@
             wukong: "Wukong",
             yunara: "Yunara",
           };
+          // Leer advertencias de status.json
+          const statusData = await window.skinsAPI.getChampionStatus();
           // Diccionario de URLs personalizadas para loadscreens
 
           // Diccionario de URLs personalizadas para loadscreens
@@ -539,7 +541,6 @@
             card.style.cursor = "pointer";
 
             // ALERTA DE ADVERTENCIA
-            const statusData = window.skinsAPI.getChampionStatus();
             if (statusData && statusData[name]) {
               const alertDiv = document.createElement("div");
               alertDiv.className = "alert alert-warning p-2 position-absolute top-0 end-0 m-2";
