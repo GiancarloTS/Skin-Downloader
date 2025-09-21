@@ -1,7 +1,7 @@
 {
-  "Ahri": {
-    "skin": "KDA ALL OUT",
-    "descripcion": "Testing - tengo la mea pixula"
+  "Viego": {
+    "skin": "King Viego",
+    "descripcion": "Skin se ve completamente blanca"
   },
   "Yasuo": {
     "skin": "PROYECTO",
@@ -13,6 +13,6 @@
   },  
 "Kindred": {
     "skin":"Chosen of the Wolf Kindred",
-    "descripcion":"skin se ve completamente blanca"
+    "descripcion":"Skin se ve completamente blanca"
   }
 }
