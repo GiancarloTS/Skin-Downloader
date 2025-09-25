@@ -24,7 +24,6 @@
         flex-direction: column;
         justify-content: flex-end;
         align-items: stretch;
-
       }
       .champion-card img {
         width: 100%;
@@ -60,7 +59,29 @@
     </style>
   </head>
   <body>
-    <div class="container py-4">
+    <div
+      style="
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80px;
+        height: 100%;
+        background: #222;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 10px;
+        z-index: 10;
+      "
+    >
+      <span style="font-size: 12px; margin-bottom: 10px">Historial</span>
+      <div
+        id="historial-campeones"
+        style="width: 100%; display: flex; flex-direction: column; gap: 8px"
+      ></div>
+    </div>
+    <div class="container py-4" style="margin-left: 90px">
       <h1 class="text-center fw-bold" style="color: #f5c518">
         Bienvenido a LOL Skins Downloader
       </h1>
@@ -94,7 +115,9 @@
               ></button>
             </div>
             <div class="modal-body">
-              <label for="githubToken" class="form-label">Token de GitHub:</label>
+              <label for="githubToken" class="form-label"
+                >Token de GitHub:</label
+              >
               <input
                 type="text"
                 id="githubToken"
@@ -125,7 +148,7 @@
           type="text"
           class="form-control w-50"
           placeholder="Buscar campeón..."
-          style="max-width:400px;"
+          style="max-width: 400px"
         />
       </div>
       <div id="championsGrid" class="row g-4 justify-content-center"></div>
@@ -143,12 +166,178 @@
 
       // Diccionario de roles por campeón (puedes ajustar según tus necesidades)
       const championRoles = {
-        "Aatrox": ["top"], "Ahri": ["mid"], "Akali": ["top","mid"], "Akshan": ["mid","adc"], "Alistar": ["supp"], "Amumu": ["jg","supp"], "Anivia": ["mid"], "Annie": ["mid","supp"], "Aphelios": ["adc"], "Ashe": ["adc","supp"], "Aurelion Sol": ["mid"], "Azir": ["mid"], "Bard": ["supp"], "Bel'Veth": ["jg"], "Blitzcrank": ["supp"], "Brand": ["mid","supp"], "Braum": ["supp"], "Briar": ["jg"], "Caitlyn": ["adc"], "Camille": ["top"], "Cassiopeia": ["mid"], "Cho'Gath": ["top","mid"], "Corki": ["mid"], "Darius": ["top"], "Diana": ["mid","jg"], "Draven": ["adc"], "Dr. Mundo": ["top","jg"], "Ekko": ["mid","jg"], "Elise": ["jg"], "Evelynn": ["jg"], "Ezreal": ["adc"], "Fiddlesticks": ["jg","supp"], "Fiora": ["top"], "Fizz": ["mid","jg"], "Galio": ["mid","supp","top"], "Gangplank": ["top"], "Garen": ["top"], "Gnar": ["top"], "Gragas": ["top","jg","mid"], "Graves": ["jg","top"], "Gwen": ["top"], "Hecarim": ["jg"], "Heimerdinger": ["mid","supp"], "Hwei": ["mid"], "Illaoi": ["top"], "Irelia": ["top","mid"], "Ivern": ["jg"], "Janna": ["supp"], "Jarvan IV": ["jg","top"], "Jax": ["top","jg"], "Jayce": ["top","mid"], "Jhin": ["adc"], "Jinx": ["adc"], "Kai'Sa": ["adc"], "Kalista": ["adc"], "Karma": ["supp","mid"], "Karthus": ["jg","mid"], "Kassadin": ["mid"], "Katarina": ["mid"], "Kayle": ["top","mid"], "Kayn": ["jg"], "Kennen": ["top","mid"], "Kha'Zix": ["jg"], "Kindred": ["jg","adc"], "Kled": ["top"], "Kog'Maw": ["adc"], "LeBlanc": ["mid"], "Lee Sin": ["jg","top"], "Leona": ["supp","top"], "Lillia": ["jg","top"], "Lissandra": ["mid"], "Lucian": ["adc","mid"], "Lulu": ["supp"], "Lux": ["mid","supp"], "Malphite": ["top","mid"], "Malzahar": ["mid"], "Maokai": ["top","supp","jg"], "Master Yi": ["jg"], "Milio": ["supp"], "Miss Fortune": ["adc","supp"], "Mordekaiser": ["top"], "Morgana": ["supp","mid"], "Naafiri": ["mid"], "Nami": ["supp"], "Nasus": ["top","jg"], "Nautilus": ["supp","top"], "Neeko": ["mid","supp","top"], "Nidalee": ["jg","mid"], "Nilah": ["adc"], "Nocturne": ["jg","mid","top"], "Nunu y Willump": ["jg"], "Olaf": ["top","jg"], "Orianna": ["mid"], "Ornn": ["top"], "Pantheon": ["top","supp","mid"], "Poppy": ["top","jg","supp"], "Pyke": ["supp","mid"], "Qiyana": ["mid","jg"], "Quinn": ["top","adc"], "Rakan": ["supp"], "Rammus": ["jg","top"], "Rek'Sai": ["jg"], "Rell": ["supp","jg"], "Renata": ["supp"], "Renekton": ["top"], "Rengar": ["jg","top"], "Riven": ["top"], "Rumble": ["top","mid"], "Ryze": ["mid","top"], "Samira": ["adc"], "Sejuani": ["jg","top"], "Senna": ["supp","adc"], "Seraphine": ["supp","mid"], "Sett": ["top","mid"], "Shaco": ["jg","supp"], "Shen": ["top"], "Shyvana": ["jg","top"], "Singed": ["top"], "Sion": ["top"], "Sivir": ["adc"], "Skarner": ["jg","top"], "Smolder": ["adc"], "Sona": ["supp"], "Soraka": ["supp"], "Swain": ["mid","supp","top"], "Sylas": ["mid","top","jg"], "Syndra": ["mid"], "Tahm Kench": ["supp","top"], "Taliyah": ["mid","jg"], "Talon": ["mid","jg"], "Taric": ["supp","top"], "Teemo": ["top"], "Thresh": ["supp"], "Tristana": ["adc","mid"], "Trundle": ["jg","top"], "Tryndamere": ["top","mid"], "Twisted Fate": ["mid"], "Twitch": ["adc","jg"], "Udyr": ["jg","top"], "Urgot": ["top"], "Varus": ["adc","mid"], "Vayne": ["adc","top"], "Veigar": ["mid","supp"], "Vel'Koz": ["supp","mid"], "Vex": ["mid"], "Vi": ["jg","top"], "Viego": ["jg","top"], "Viktor": ["mid"], "Vladimir": ["mid","top"], "Volibear": ["top","jg"], "Warwick": ["jg","top"], "Wukong": ["top","jg"], "Xayah": ["adc"], "Xerath": ["mid","supp"], "Xin Zhao": ["jg","top"], "Yasuo": ["mid","top"], "Yone": ["mid","top"], "Yorick": ["top"], "Yuumi": ["supp"], "Zac": ["jg","top"], "Zed": ["mid","top"], "Zeri": ["adc"], "Ziggs": ["mid","adc"], "Zilean": ["supp","mid"], "Zoe": ["mid"], "Zyra": ["supp","mid"]
+        Aatrox: ["top"],
+        Ahri: ["mid"],
+        Akali: ["top", "mid"],
+        Akshan: ["mid", "adc"],
+        Alistar: ["supp"],
+        Amumu: ["jg", "supp"],
+        Anivia: ["mid"],
+        Annie: ["mid", "supp"],
+        Aphelios: ["adc"],
+        Ashe: ["adc", "supp"],
+        "Aurelion Sol": ["mid"],
+        Azir: ["mid"],
+        Bard: ["supp"],
+        "Bel'Veth": ["jg"],
+        Blitzcrank: ["supp"],
+        Brand: ["mid", "supp"],
+        Braum: ["supp"],
+        Briar: ["jg"],
+        Caitlyn: ["adc"],
+        Camille: ["top"],
+        Cassiopeia: ["mid"],
+        "Cho'Gath": ["top", "mid"],
+        Corki: ["mid"],
+        Darius: ["top"],
+        Diana: ["mid", "jg"],
+        Draven: ["adc"],
+        "Dr. Mundo": ["top", "jg"],
+        Ekko: ["mid", "jg"],
+        Elise: ["jg"],
+        Evelynn: ["jg"],
+        Ezreal: ["adc"],
+        Fiddlesticks: ["jg", "supp"],
+        Fiora: ["top"],
+        Fizz: ["mid", "jg"],
+        Galio: ["mid", "supp", "top"],
+        Gangplank: ["top"],
+        Garen: ["top"],
+        Gnar: ["top"],
+        Gragas: ["top", "jg", "mid"],
+        Graves: ["jg", "top"],
+        Gwen: ["top"],
+        Hecarim: ["jg"],
+        Heimerdinger: ["mid", "supp"],
+        Hwei: ["mid"],
+        Illaoi: ["top"],
+        Irelia: ["top", "mid"],
+        Ivern: ["jg"],
+        Janna: ["supp"],
+        "Jarvan IV": ["jg", "top"],
+        Jax: ["top", "jg"],
+        Jayce: ["top", "mid"],
+        Jhin: ["adc"],
+        Jinx: ["adc"],
+        "Kai'Sa": ["adc"],
+        Kalista: ["adc"],
+        Karma: ["supp", "mid"],
+        Karthus: ["jg", "mid"],
+        Kassadin: ["mid"],
+        Katarina: ["mid"],
+        Kayle: ["top", "mid"],
+        Kayn: ["jg"],
+        Kennen: ["top", "mid"],
+        "Kha'Zix": ["jg"],
+        Kindred: ["jg", "adc"],
+        Kled: ["top"],
+        "Kog'Maw": ["adc"],
+        LeBlanc: ["mid"],
+        "Lee Sin": ["jg", "top"],
+        Leona: ["supp", "top"],
+        Lillia: ["jg", "top"],
+        Lissandra: ["mid"],
+        Lucian: ["adc", "mid"],
+        Lulu: ["supp"],
+        Lux: ["mid", "supp"],
+        Malphite: ["top", "mid"],
+        Malzahar: ["mid"],
+        Maokai: ["top", "supp", "jg"],
+        "Master Yi": ["jg"],
+        Milio: ["supp"],
+        "Miss Fortune": ["adc", "supp"],
+        Mordekaiser: ["top"],
+        Morgana: ["supp", "mid"],
+        Naafiri: ["mid"],
+        Nami: ["supp"],
+        Nasus: ["top", "jg"],
+        Nautilus: ["supp", "top"],
+        Neeko: ["mid", "supp", "top"],
+        Nidalee: ["jg", "mid"],
+        Nilah: ["adc"],
+        Nocturne: ["jg", "mid", "top"],
+        "Nunu y Willump": ["jg"],
+        Olaf: ["top", "jg"],
+        Orianna: ["mid"],
+        Ornn: ["top"],
+        Pantheon: ["top", "supp", "mid"],
+        Poppy: ["top", "jg", "supp"],
+        Pyke: ["supp", "mid"],
+        Qiyana: ["mid", "jg"],
+        Quinn: ["top", "adc"],
+        Rakan: ["supp"],
+        Rammus: ["jg", "top"],
+        "Rek'Sai": ["jg"],
+        Rell: ["supp", "jg"],
+        Renata: ["supp"],
+        Renekton: ["top"],
+        Rengar: ["jg", "top"],
+        Riven: ["top"],
+        Rumble: ["top", "mid"],
+        Ryze: ["mid", "top"],
+        Samira: ["adc"],
+        Sejuani: ["jg", "top"],
+        Senna: ["supp", "adc"],
+        Seraphine: ["supp", "mid"],
+        Sett: ["top", "mid"],
+        Shaco: ["jg", "supp"],
+        Shen: ["top"],
+        Shyvana: ["jg", "top"],
+        Singed: ["top"],
+        Sion: ["top"],
+        Sivir: ["adc"],
+        Skarner: ["jg", "top"],
+        Smolder: ["adc"],
+        Sona: ["supp"],
+        Soraka: ["supp"],
+        Swain: ["mid", "supp", "top"],
+        Sylas: ["mid", "top", "jg"],
+        Syndra: ["mid"],
+        "Tahm Kench": ["supp", "top"],
+        Taliyah: ["mid", "jg"],
+        Talon: ["mid", "jg"],
+        Taric: ["supp", "top"],
+        Teemo: ["top"],
+        Thresh: ["supp"],
+        Tristana: ["adc", "mid"],
+        Trundle: ["jg", "top"],
+        Tryndamere: ["top", "mid"],
+        "Twisted Fate": ["mid"],
+        Twitch: ["adc", "jg"],
+        Udyr: ["jg", "top"],
+        Urgot: ["top"],
+        Varus: ["adc", "mid"],
+        Vayne: ["adc", "top"],
+        Veigar: ["mid", "supp"],
+        "Vel'Koz": ["supp", "mid"],
+        Vex: ["mid"],
+        Vi: ["jg", "top"],
+        Viego: ["jg", "top"],
+        Viktor: ["mid"],
+        Vladimir: ["mid", "top"],
+        Volibear: ["top", "jg"],
+        Warwick: ["jg", "top"],
+        Wukong: ["top", "jg"],
+        Xayah: ["adc"],
+        Xerath: ["mid", "supp"],
+        "Xin Zhao": ["jg", "top"],
+        Yasuo: ["mid", "top"],
+        Yone: ["mid", "top"],
+        Yorick: ["top"],
+        Yuumi: ["supp"],
+        Zac: ["jg", "top"],
+        Zed: ["mid", "top"],
+        Zeri: ["adc"],
+        Ziggs: ["mid", "adc"],
+        Zilean: ["supp", "mid"],
+        Zoe: ["mid"],
+        Zyra: ["supp", "mid"],
       };
       let championsCache = [];
       let currentRole = "all";
+      let recommendedChampion = null;
+      const grid = document.getElementById("championsGrid");
       async function loadChampions(search = "", role = "all") {
-        const grid = document.getElementById("championsGrid");
         grid.innerHTML = "<p>Cargando...</p>";
         try {
           if (championsCache.length === 0) {
@@ -497,84 +686,70 @@
             Zyra: "https://raw.communitydragon.org/latest/game/assets/characters/zyra/skins/base/zyraloadscreen.png",
           };
           // ...fin del objeto loadscreenMap correctamente definido...
-
+          // --- HISTORIAL DE CAMPEONES SELECCIONADOS ---
+          const HISTORIAL_KEY = "historial_campeones";
+          function getHistorial() {
+            try {
+              return JSON.parse(localStorage.getItem(HISTORIAL_KEY)) || [];
+            } catch {
+              return [];
+            }
+          }
+          function setHistorial(historial) {
+            localStorage.setItem(HISTORIAL_KEY, JSON.stringify(historial));
+          }
+          function renderHistorial() {
+            const historial = getHistorial();
+            const cont = document.getElementById("historial-campeones");
+            cont.innerHTML = "";
+            historial.forEach((champion, idx) => {
+              const div = document.createElement("div");
+              div.className = "champion-historial-item";
+              div.style =
+                "width: 60px; height: 80px; background: #23272f; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #444;";
+              div.title = champion;
+              // Imagen del campeón
+              const img = document.createElement("img");
+              img.src = loadscreenMap[champion] || "";
+              img.alt = champion;
+              img.style =
+                "width: 48px; height: 48px; object-fit: cover; border-radius: 6px; margin-bottom: 2px;";
+              div.appendChild(img);
+              // Nombre
+              const label = document.createElement("span");
+              label.textContent = champion;
+              label.style =
+                "font-size: 11px; color: #f5c518; text-align: center;";
+              div.appendChild(label);
+              // Click para seleccionar
+              div.onclick = () => {
+                recommendedChampion = champion;
+                loadChampions(
+                  document.getElementById("championSearch").value,
+                  currentRole
+                );
+              };
+              cont.appendChild(div);
+            });
+          }
+          function addToHistorial(champion) {
+            let historial = getHistorial();
+            historial = historial.filter((c) => c !== champion);
+            historial.unshift(champion);
+            if (historial.length > 10) historial = historial.slice(0, 10); // máximo 10
+            setHistorial(historial);
+            renderHistorial();
+          }
+          // Exponer la función al ámbito global
+          window.addToHistorial = addToHistorial;
+          // Renderizar historial al cargar
+          document.addEventListener("DOMContentLoaded", renderHistorial);
+          // --- FIN HISTORIAL ---
           // ...fin del objeto loadscreenMap correctamente definido...
           // Filtrar campeones por búsqueda y rol
-          let champions = championsCache.filter((name) =>
-            name.toLowerCase().includes(search.toLowerCase())
-          );
-          if (role !== "all") {
-            champions = champions.filter((name) => {
-              const roles = championRoles[name] || [];
-              return roles.includes(role);
-            });
-          }
-          grid.innerHTML = "";
-          // Función para normalizar nombres de campeón para la URL
-          function normalizeChampionName(name) {
-            return name
-              .toLowerCase()
-              .replace(/á/g, 'a')
-              .replace(/é/g, 'e')
-              .replace(/í/g, 'i')
-              .replace(/ó/g, 'o')
-              .replace(/ú/g, 'u')
-              .replace(/ñ/g, 'n')
-              .replace(/[^a-z0-9]/g, '') // quita espacios, puntos, apóstrofes, etc.
-              ;
-          }
-          champions.forEach((name) => {
-            let champKey = iconMap[name.toLowerCase()] || name;
-            let loadscreenUrl;
-            if (loadscreenMap[name]) {
-              loadscreenUrl = loadscreenMap[name];
-            } else {
-              let autoName = name.toLowerCase().replace(/[^a-z0-9]/g, "");
-              loadscreenUrl = `https://raw.communitydragon.org/latest/game/assets/characters/${autoName}/skins/base/${autoName}loadscreen.png`;
-            }
-            const col = document.createElement("div");
-            col.className =
-              "col-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center";
-            const card = document.createElement("div");
-            card.className = "champion-card card bg-dark-custom border-0 mb-2 position-relative";
-            card.style.width = "180px";
-            card.style.cursor = "pointer";
-
-            // ALERTA DE ADVERTENCIA
-            if (statusData && statusData[name]) {
-              const alertDiv = document.createElement("div");
-              alertDiv.className = "alert alert-warning p-2 position-absolute top-0 end-0 m-2";
-              alertDiv.style.zIndex = 10;
-              let warnings = statusData[name];
-              if (!Array.isArray(warnings)) warnings = [warnings];
-              alertDiv.innerHTML = warnings.map(w => `<b>${w.skin}</b>: ${w.descripcion}`).join('<br><br>');
-              card.appendChild(alertDiv);
-            }
-
-            const img = document.createElement("img");
-            img.src = loadscreenUrl;
-            img.alt = name;
-            img.className = "card-img-top";
-            img.onerror = function () {
-              img.src =
-                "https://static.wikia.nocookie.net/leagueoflegends/images/6/6e/Champion.png";
-            };
-            card.appendChild(img);
-            const label = document.createElement("div");
-            label.textContent = champKey;
-            label.className = "champion-label card-footer text-center";
-            card.appendChild(label);
-            card.addEventListener("click", () => {
-              // Pasar el nombre normalizado por la URL, pero mostrar el nombre real en skins.html
-              window.location.href = `skins.html?champion=${encodeURIComponent(normalizeChampionName(name))}`;
-            });
-            col.appendChild(card);
-            grid.appendChild(col);
-          });
-        } catch (e) {
-          grid.innerHTML = "<p>Error al cargar campeones.</p>";
-        }
-      }
+          // ...existing code...
+        } // <-- Add this closing brace to end loadChampions function
+        
 
       // Inicializar y conectar barra de búsqueda y botones de rol
       document.addEventListener("DOMContentLoaded", () => {
@@ -585,17 +760,32 @@
           });
         }
         // Botones de filtro de rol
-        document.querySelectorAll('#roleFilters button').forEach(btn => {
-          btn.addEventListener('click', function() {
-            document.querySelectorAll('#roleFilters button').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            currentRole = this.getAttribute('data-role');
+        document.querySelectorAll("#roleFilters button").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            document
+              .querySelectorAll("#roleFilters button")
+              .forEach((b) => b.classList.remove("active"));
+            this.classList.add("active");
+            currentRole = this.getAttribute("data-role");
             loadChampions(searchInput.value, currentRole);
           });
         });
         // Marcar "Todos" como activo al inicio
-        document.querySelector('#roleFilters button[data-role="all"]').classList.add('active');
+        document
+          .querySelector('#roleFilters button[data-role="all"]')
+          .classList.add("active");
         loadChampions();
+        // Escuchar campeón recomendado desde Electron
+        if (window.skinsAPI && window.skinsAPI.onChampionSelected) {
+          window.skinsAPI.onChampionSelected((championName) => {
+            recommendedChampion = championName;
+            addToHistorial(championName);
+            loadChampions(
+              searchInput.value,
+              currentRole
+            );
+          });
+        }
       });
 
       // Cambiar directorio de descarga
@@ -608,26 +798,31 @@
           }
         });
       document.getElementById("settingsBtn").addEventListener("click", () => {
-  const modal = new bootstrap.Modal(document.getElementById('settingsModal'));
-  // Cargar token guardado si existe
-  document.getElementById("githubToken").value = localStorage.getItem("github_token") || "";
-  modal.show();
-});
+        const modal = new bootstrap.Modal(
+          document.getElementById("settingsModal")
+        );
+        // Cargar token guardado si existe
+        document.getElementById("githubToken").value =
+          localStorage.getItem("github_token") || "";
+        modal.show();
+      });
 
-document.getElementById("saveTokenBtn").addEventListener("click", () => {
-  const token = document.getElementById("githubToken").value.trim();
-  localStorage.setItem("github_token", token);
-  // Después de guardar el token:
-window.skinsAPI.setToken(token);
-  alert("Token guardado correctamente.");
-  bootstrap.Modal.getInstance(document.getElementById('settingsModal')).hide();
-});
+      document.getElementById("saveTokenBtn").addEventListener("click", () => {
+        const token = document.getElementById("githubToken").value.trim();
+        localStorage.setItem("github_token", token);
+        // Después de guardar el token:
+        window.skinsAPI.setToken(token);
+        alert("Token guardado correctamente.");
+        bootstrap.Modal.getInstance(
+          document.getElementById("settingsModal")
+        ).hide();
+      });
 
-// Al cargar la página, pasar el token guardado a preload.js
-document.addEventListener("DOMContentLoaded", () => {
-  const savedToken = localStorage.getItem("github_token");
-  if (savedToken) window.skinsAPI.setToken(savedToken);
-});
+      // Al cargar la página, pasar el token guardado a preload.js
+      document.addEventListener("DOMContentLoaded", () => {
+        const savedToken = localStorage.getItem("github_token");
+        if (savedToken) window.skinsAPI.setToken(savedToken);
+      });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
