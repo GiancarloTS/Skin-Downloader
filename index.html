@@ -1,134 +1,38 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        background: #181a20;
-        color: #e0e0e0;
-        font-family: "Segoe UI", Arial, sans-serif;
-      }
-      .bg-dark-custom {
-        background: #23272f !important;
-      }
-      .champion-card {
-        background: #23272f;
-        box-shadow: 0 2px 8px #0002;
-        overflow: hidden;
-        transition: box-shadow 0.2s;
-        height: 360px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: stretch;
-      }
-      .champion-card img {
-        width: 100%;
-        height: 360px;
-        object-fit: fill;
-        background: #23272f;
-        display: block;
-      }
-      .champion-label {
-        font-size: 20px;
-        color: #f5c518;
-        font-weight: bold;
-        text-align: center;
-        background: #23272f;
-        padding: 8px 0 4px 0;
-        margin: 0;
-        border-bottom-left-radius: 12px;
-        border-bottom-right-radius: 12px;
-      }
-      .btn-gold {
-        background: #f5c518;
-        color: #23272f;
-        border: none;
-        font-weight: bold;
-      }
-      .btn-gold:hover {
-        background: #ffe066;
-        color: #181a20;
-      }
-      .champion-card:hover {
-        box-shadow: 0 4px 30px 1px #e0e0e0;
-      }
-    </style>
+    <meta charset="UTF-8" />
+    <title>LOL Skins Downloader</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="index.css" />
+    <!-- Objetos separados en archivos externos -->
+    <script src="championRoles.js"></script>
+    <script src="iconMap.js"></script>
+    <script src="loadscreenMap.js"></script>
   </head>
   <body>
-    <div
-      style="
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 80px;
-        height: 100%;
-        background: #222;
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-top: 10px;
-        z-index: 10;
-      "
-    >
-      <span style="font-size: 12px; margin-bottom: 10px">Historial</span>
-      <div
-        id="historial-campeones"
-        style="width: 100%; display: flex; flex-direction: column; gap: 8px"
-      ></div>
-    </div>
-    <div class="container py-4" style="margin-left: 90px">
-      <h1 class="text-center fw-bold" style="color: #f5c518">
-        Bienvenido a LOL Skins Downloader
-      </h1>
+    <div class="container py-4">
+      <h1 class="text-center fw-bold" style="color: #f5c518">Bienvenido a LOL Skins Downloader</h1>
       <div class="d-flex justify-content-between mb-4">
         <div>
-          <button id="settingsBtn" class="btn btn-secondary me-2">
-            ⚙ Ajustes
-          </button>
-          <button id="changeDir" class="btn btn-gold px-4 py-2">
-            Cambiar directorio de descarga
-          </button>
+          <button id="settingsBtn" class="btn btn-secondary me-2">⚙ Ajustes</button>
+          <button id="changeDir" class="btn btn-gold px-4 py-2">Cambiar directorio de descarga</button>
         </div>
       </div>
       <!-- Modal de Ajustes -->
-      <div
-        class="modal fade"
-        id="settingsModal"
-        tabindex="-1"
-        aria-labelledby="settingsModalLabel"
-        aria-hidden="true"
-      >
+      <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content bg-dark-custom text-light">
             <div class="modal-header">
               <h5 class="modal-title" id="settingsModalLabel">Ajustes</h5>
-              <button
-                type="button"
-                class="btn-close btn-close-white"
-                data-bs-dismiss="modal"
-                aria-label="Cerrar"
-              ></button>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
-              <label for="githubToken" class="form-label"
-                >Token de GitHub:</label
-              >
-              <input
-                type="text"
-                id="githubToken"
-                class="form-control"
-                placeholder="Pega aquí tu token personal"
-              />
+              <label for="githubToken" class="form-label">Token de GitHub:</label>
+              <input type="text" id="githubToken" class="form-control" placeholder="Pega aquí tu token personal" />
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-gold" id="saveTokenBtn">
-                Guardar
-              </button>
+              <button type="button" class="btn btn-gold" id="saveTokenBtn">Guardar</button>
             </div>
           </div>
         </div>
@@ -143,685 +47,147 @@
           <button class="btn btn-gold me-2 mb-1" data-role="adc">ADC</button>
           <button class="btn btn-gold me-2 mb-1" data-role="supp">Supp</button>
         </div>
-        <input
-          id="championSearch"
-          type="text"
-          class="form-control w-50"
-          placeholder="Buscar campeón..."
-          style="max-width: 400px"
-        />
+        <input id="championSearch" type="text" class="form-control w-50" placeholder="Buscar campeón..." style="max-width: 400px" />
       </div>
       <div id="championsGrid" class="row g-4 justify-content-center"></div>
       <div id="skinsList" class="mt-4"></div>
     </div>
 
     <script>
-      // PASO CRÍTICO: pasar el token antes de cualquier fetch
-      const savedToken = localStorage.getItem("github_token");
-      if (savedToken) window.skinsAPI.setToken(savedToken);
-
-      // Mostrar grid de campeones
-
-      // El div #skinsList ya está en el HTML
-
-      // Diccionario de roles por campeón (puedes ajustar según tus necesidades)
-      const championRoles = {
-        Aatrox: ["top"],
-        Ahri: ["mid"],
-        Akali: ["top", "mid"],
-        Akshan: ["mid", "adc"],
-        Alistar: ["supp"],
-        Amumu: ["jg", "supp"],
-        Anivia: ["mid"],
-        Annie: ["mid", "supp"],
-        Aphelios: ["adc"],
-        Ashe: ["adc", "supp"],
-        "Aurelion Sol": ["mid"],
-        Azir: ["mid"],
-        Bard: ["supp"],
-        "Bel'Veth": ["jg"],
-        Blitzcrank: ["supp"],
-        Brand: ["mid", "supp"],
-        Braum: ["supp"],
-        Briar: ["jg"],
-        Caitlyn: ["adc"],
-        Camille: ["top"],
-        Cassiopeia: ["mid"],
-        "Cho'Gath": ["top", "mid"],
-        Corki: ["mid"],
-        Darius: ["top"],
-        Diana: ["mid", "jg"],
-        Draven: ["adc"],
-        "Dr. Mundo": ["top", "jg"],
-        Ekko: ["mid", "jg"],
-        Elise: ["jg"],
-        Evelynn: ["jg"],
-        Ezreal: ["adc"],
-        Fiddlesticks: ["jg", "supp"],
-        Fiora: ["top"],
-        Fizz: ["mid", "jg"],
-        Galio: ["mid", "supp", "top"],
-        Gangplank: ["top"],
-        Garen: ["top"],
-        Gnar: ["top"],
-        Gragas: ["top", "jg", "mid"],
-        Graves: ["jg", "top"],
-        Gwen: ["top"],
-        Hecarim: ["jg"],
-        Heimerdinger: ["mid", "supp"],
-        Hwei: ["mid"],
-        Illaoi: ["top"],
-        Irelia: ["top", "mid"],
-        Ivern: ["jg"],
-        Janna: ["supp"],
-        "Jarvan IV": ["jg", "top"],
-        Jax: ["top", "jg"],
-        Jayce: ["top", "mid"],
-        Jhin: ["adc"],
-        Jinx: ["adc"],
-        "Kai'Sa": ["adc"],
-        Kalista: ["adc"],
-        Karma: ["supp", "mid"],
-        Karthus: ["jg", "mid"],
-        Kassadin: ["mid"],
-        Katarina: ["mid"],
-        Kayle: ["top", "mid"],
-        Kayn: ["jg"],
-        Kennen: ["top", "mid"],
-        "Kha'Zix": ["jg"],
-        Kindred: ["jg", "adc"],
-        Kled: ["top"],
-        "Kog'Maw": ["adc"],
-        LeBlanc: ["mid"],
-        "Lee Sin": ["jg", "top"],
-        Leona: ["supp", "top"],
-        Lillia: ["jg", "top"],
-        Lissandra: ["mid"],
-        Lucian: ["adc", "mid"],
-        Lulu: ["supp"],
-        Lux: ["mid", "supp"],
-        Malphite: ["top", "mid"],
-        Malzahar: ["mid"],
-        Maokai: ["top", "supp", "jg"],
-        "Master Yi": ["jg"],
-        Milio: ["supp"],
-        "Miss Fortune": ["adc", "supp"],
-        Mordekaiser: ["top"],
-        Morgana: ["supp", "mid"],
-        Naafiri: ["mid"],
-        Nami: ["supp"],
-        Nasus: ["top", "jg"],
-        Nautilus: ["supp", "top"],
-        Neeko: ["mid", "supp", "top"],
-        Nidalee: ["jg", "mid"],
-        Nilah: ["adc"],
-        Nocturne: ["jg", "mid", "top"],
-        "Nunu y Willump": ["jg"],
-        Olaf: ["top", "jg"],
-        Orianna: ["mid"],
-        Ornn: ["top"],
-        Pantheon: ["top", "supp", "mid"],
-        Poppy: ["top", "jg", "supp"],
-        Pyke: ["supp", "mid"],
-        Qiyana: ["mid", "jg"],
-        Quinn: ["top", "adc"],
-        Rakan: ["supp"],
-        Rammus: ["jg", "top"],
-        "Rek'Sai": ["jg"],
-        Rell: ["supp", "jg"],
-        Renata: ["supp"],
-        Renekton: ["top"],
-        Rengar: ["jg", "top"],
-        Riven: ["top"],
-        Rumble: ["top", "mid"],
-        Ryze: ["mid", "top"],
-        Samira: ["adc"],
-        Sejuani: ["jg", "top"],
-        Senna: ["supp", "adc"],
-        Seraphine: ["supp", "mid"],
-        Sett: ["top", "mid"],
-        Shaco: ["jg", "supp"],
-        Shen: ["top"],
-        Shyvana: ["jg", "top"],
-        Singed: ["top"],
-        Sion: ["top"],
-        Sivir: ["adc"],
-        Skarner: ["jg", "top"],
-        Smolder: ["adc"],
-        Sona: ["supp"],
-        Soraka: ["supp"],
-        Swain: ["mid", "supp", "top"],
-        Sylas: ["mid", "top", "jg"],
-        Syndra: ["mid"],
-        "Tahm Kench": ["supp", "top"],
-        Taliyah: ["mid", "jg"],
-        Talon: ["mid", "jg"],
-        Taric: ["supp", "top"],
-        Teemo: ["top"],
-        Thresh: ["supp"],
-        Tristana: ["adc", "mid"],
-        Trundle: ["jg", "top"],
-        Tryndamere: ["top", "mid"],
-        "Twisted Fate": ["mid"],
-        Twitch: ["adc", "jg"],
-        Udyr: ["jg", "top"],
-        Urgot: ["top"],
-        Varus: ["adc", "mid"],
-        Vayne: ["adc", "top"],
-        Veigar: ["mid", "supp"],
-        "Vel'Koz": ["supp", "mid"],
-        Vex: ["mid"],
-        Vi: ["jg", "top"],
-        Viego: ["jg", "top"],
-        Viktor: ["mid"],
-        Vladimir: ["mid", "top"],
-        Volibear: ["top", "jg"],
-        Warwick: ["jg", "top"],
-        Wukong: ["top", "jg"],
-        Xayah: ["adc"],
-        Xerath: ["mid", "supp"],
-        "Xin Zhao": ["jg", "top"],
-        Yasuo: ["mid", "top"],
-        Yone: ["mid", "top"],
-        Yorick: ["top"],
-        Yuumi: ["supp"],
-        Zac: ["jg", "top"],
-        Zed: ["mid", "top"],
-        Zeri: ["adc"],
-        Ziggs: ["mid", "adc"],
-        Zilean: ["supp", "mid"],
-        Zoe: ["mid"],
-        Zyra: ["supp", "mid"],
-      };
+      // --- Estado global ---
       let championsCache = [];
       let currentRole = "all";
-      let recommendedChampion = null;
-      const grid = document.getElementById("championsGrid");
+
+      // --- Utilidades ---
+      function normalizeChampionName(name) {
+        return name
+          .toLowerCase()
+          .replace(/á/g, "a")
+          .replace(/é/g, "e")
+          .replace(/í/g, "i")
+          .replace(/ó/g, "o")
+          .replace(/ú/g, "u")
+          .replace(/ñ/g, "n")
+          .replace(/[^a-z0-9]/g, "");
+      }
+
+      // --- Renderizado de campeones ---
       async function loadChampions(search = "", role = "all") {
+        const grid = document.getElementById("championsGrid");
         grid.innerHTML = "<p>Cargando...</p>";
         try {
           if (championsCache.length === 0) {
             championsCache = await window.skinsAPI.getChampions();
           }
-          // Diccionario de mapeo para iconos
-          const iconMap = {
-            ambessa: "Ambessa",
-            "aurelion sol": "AurelionSol",
-            aurora: "Aurora",
-            "cho'gat": "Chogath",
-            "Dr.Mundo": "Dr.Mundo",
-            hwei: "Hwei",
-            "jarvan iv": "JarvanIV",
-            "kai'sa": "Kaisa",
-            "kha'zix": "Khazix",
-            "kog'maw": "KogMaw",
-            leBlanc: "LeBlanc",
-            "lee sin": "LeeSin",
-            "master yi": "MasterYi",
-            mel: "Mel",
-            "miss fortune": "MissFortune",
-            "nunu y willump": "Nunu",
-            "rek'sai": "RekSai",
-            "renata glasc": "Renata",
-            smolder: "Smolder",
-            "tahm kench": "TahmKench",
-            "twisted fate": "TwistedFate",
-            "vel'koz": "Velkoz",
-            wukong: "Wukong",
-            yunara: "Yunara",
-          };
-          // Leer advertencias de status.json
           const statusData = await window.skinsAPI.getChampionStatus();
-          // Diccionario de URLs personalizadas para loadscreens
+          const championRoles = window.championRoles;
+          const iconMap = window.iconMap;
+          const loadscreenMap = window.loadscreenMap;
 
-          // Diccionario de URLs personalizadas para loadscreens
-          const loadscreenMap = {
-            Mel: "https://raw.communitydragon.org/latest/game/assets/characters/mel/skins/base/melloadscreen_0.mel.png",
-            Milio:
-              "https://raw.communitydragon.org/latest/game/assets/characters/milio/skins/base/milioloadscreen_0.png",
-            Naafiri:
-              "https://raw.communitydragon.org/latest/game/assets/characters/naafiri/skins/base/naafiriloadscreen_0.png",
-            "Nunu & Willump":
-              "https://raw.communitydragon.org/latest/game/assets/characters/nunu/skins/base/nunuloadscreen.png",
-            "Renata Glasc":
-              "https://raw.communitydragon.org/latest/game/assets/characters/renata/skins/base/renataloadscreen_0.png",
-            Teemo:
-              "https://raw.communitydragon.org/latest/game/assets/characters/teemo/skins/base/teemoloadscreen_0.asu_teemo.png",
-            "Xin Zhao":
-              "https://raw.communitydragon.org/latest/game/assets/characters/xinzhao/skins/base/xinzhaoreworkloadscreen_0.xinzhaorework.png",
-            Yunara:
-              "https://raw.communitydragon.org/latest/game/assets/characters/yunara/skins/base/yunaraloadscreen_0.yunara.png",
-            "Bel'Veth":
-              "https://raw.communitydragon.org/latest/game/assets/characters/belveth/skins/base/belvethloadscreen_0.png",
-            Briar:
-              "https://raw.communitydragon.org/latest/game/assets/characters/briar/skins/base/briarloadscreen_0.png",
-
-            Ahri: "https://raw.communitydragon.org/latest/game/assets/characters/ahri/skins/base/ahriloadscreen_0.png",
-            Akali:
-              "https://raw.communitydragon.org/latest/game/assets/characters/akali/skins/base/akaliloadscreen.png",
-            Aatrox:
-              "https://raw.communitydragon.org/latest/game/assets/characters/aatrox/skins/base/aatroxloadscreen.png",
-            Alistar:
-              "https://raw.communitydragon.org/latest/game/assets/characters/alistar/skins/base/alistarloadscreen.png",
-            Ambessa:
-              "https://raw.communitydragon.org/latest/game/assets/characters/ambessa/skins/base/ambessaloadscreen_0.domina.png",
-            Amumu:
-              "https://raw.communitydragon.org/latest/game/assets/characters/amumu/skins/base/amumuloadscreen.png",
-            Anivia:
-              "https://raw.communitydragon.org/latest/game/assets/characters/anivia/skins/base/anivialoadscreen.png",
-            Annie:
-              "https://raw.communitydragon.org/latest/game/assets/characters/annie/skins/base/annieloadscreen.png",
-            Aphelios:
-              "https://raw.communitydragon.org/latest/game/assets/characters/aphelios/skins/base/apheliosloadscreen.png",
-            Ashe: "https://raw.communitydragon.org/latest/game/assets/characters/ashe/skins/base/asheloadscreen.png",
-            "Aurelion Sol":
-              "https://raw.communitydragon.org/latest/game/assets/characters/aurelionsol/skins/base/aurelionsolloadscreen.png",
-            Aurora:
-              "https://raw.communitydragon.org/latest/game/assets/characters/aurora/skins/base/auroraloadscreen_0.aurora.png",
-            "": "",
-            Azir: "https://raw.communitydragon.org/latest/game/assets/characters/azir/skins/base/azirloadscreen.png",
-            Bard: "https://raw.communitydragon.org/latest/game/assets/characters/bard/skins/base/bardloadscreen.png",
-            Blitzcrank:
-              "https://raw.communitydragon.org/latest/game/assets/characters/blitzcrank/skins/base/blitzcrankloadscreen.png",
-            Brand:
-              "https://raw.communitydragon.org/latest/game/assets/characters/brand/skins/base/brandloadscreen.png",
-            Braum:
-              "https://raw.communitydragon.org/latest/game/assets/characters/braum/skins/base/braumloadscreen.png",
-            Caitlyn:
-              "https://raw.communitydragon.org/latest/game/assets/characters/caitlyn/skins/base/caitlynloadscreen_0.png",
-            Camille:
-              "https://raw.communitydragon.org/latest/game/assets/characters/camille/skins/base/camilleloadscreen.png",
-            Cassiopeia:
-              "https://raw.communitydragon.org/latest/game/assets/characters/cassiopeia/skins/base/cassiopeialoadscreen.png",
-            "Cho'Gath":
-              "https://raw.communitydragon.org/latest/game/assets/characters/chogath/skins/base/chogathloadscreen.png",
-            Corki:
-              "https://raw.communitydragon.org/latest/game/assets/characters/corki/skins/base/corkiloadscreen.png",
-            Darius:
-              "https://raw.communitydragon.org/latest/game/assets/characters/darius/skins/base/dariusloadscreen.png",
-            Diana:
-              "https://raw.communitydragon.org/latest/game/assets/characters/diana/skins/base/dianaloadscreen.png",
-            "Dr. Mundo":
-              "https://raw.communitydragon.org/latest/game/assets/characters/drmundo/skins/base/drmundoloadscreen_0.png",
-            Ekko: "https://raw.communitydragon.org/latest/game/assets/characters/ekko/skins/base/ekkoloadscreen.png",
-            Elise:
-              "https://raw.communitydragon.org/latest/game/assets/characters/elise/skins/base/eliseloadscreen.png",
-            Evelynn:
-              "https://raw.communitydragon.org/latest/game/assets/characters/evelynn/skins/base/evelynnloadscreen.png",
-            Ezreal:
-              "https://raw.communitydragon.org/latest/game/assets/characters/ezreal/skins/base/ezrealloadscreen.png",
-            Fiddlesticks:
-              "https://raw.communitydragon.org/latest/game/assets/characters/fiddlesticks/skins/base/fiddlesticksloadscreen.png",
-            Fiora:
-              "https://raw.communitydragon.org/latest/game/assets/characters/fiora/skins/base/fioraloadscreen.png",
-            Fizz: "https://raw.communitydragon.org/latest/game/assets/characters/fizz/skins/base/fizzloadscreen.png",
-            Galio:
-              "https://raw.communitydragon.org/latest/game/assets/characters/galio/skins/base/galioloadscreen.png",
-            Gangplank:
-              "https://raw.communitydragon.org/latest/game/assets/characters/gangplank/skins/base/gangplankloadscreen.png",
-            Garen:
-              "https://raw.communitydragon.org/latest/game/assets/characters/garen/skins/base/garenloadscreen.png",
-            Gnar: "https://raw.communitydragon.org/latest/game/assets/characters/gnar/skins/base/gnarloadscreen.png",
-            Gragas:
-              "https://raw.communitydragon.org/latest/game/assets/characters/gragas/skins/base/gragasloadscreen.png",
-            Graves:
-              "https://raw.communitydragon.org/latest/game/assets/characters/graves/skins/base/gravesloadscreen.png",
-            Gwen: "https://raw.communitydragon.org/latest/game/assets/characters/gwen/skins/base/gwenloadscreen_0.png",
-            Hecarim:
-              "https://raw.communitydragon.org/latest/game/assets/characters/hecarim/skins/base/hecarimloadscreen_0.png",
-            Heimerdinger:
-              "https://raw.communitydragon.org/latest/game/assets/characters/heimerdinger/skins/base/heimerdingerloadscreen.png",
-            Hwei: "https://raw.communitydragon.org/latest/game/assets/characters/hwei/skins/skin0/hweiloadscreen_0.png",
-            Illaoi:
-              "https://raw.communitydragon.org/latest/game/assets/characters/illaoi/skins/base/illaoiloadscreen.png",
-            Irelia:
-              "https://raw.communitydragon.org/latest/game/assets/characters/irelia/skins/base/irelialoadscreen.png",
-            Ivern:
-              "https://raw.communitydragon.org/latest/game/assets/characters/ivern/skins/base/ivernloadscreen.png",
-            Janna:
-              "https://raw.communitydragon.org/latest/game/assets/characters/janna/skins/base/jannaloadscreen.png",
-            "Jarvan IV":
-              "https://raw.communitydragon.org/latest/game/assets/characters/jarvaniv/skins/base/jarvanivloadscreen.png",
-            Jax: "https://raw.communitydragon.org/latest/game/assets/characters/jax/skins/base/jaxloadscreen_0.png",
-            Jayce:
-              "https://raw.communitydragon.org/latest/game/assets/characters/jayce/skins/base/jayceloadscreen.png",
-            Jhin: "https://raw.communitydragon.org/latest/game/assets/characters/jhin/skins/base/jhinloadscreen.png",
-            Jinx: "https://raw.communitydragon.org/latest/game/assets/characters/jinx/skins/base/jinxloadscreen.png",
-            "K'Sante":
-              "https://raw.communitydragon.org/latest/game/assets/characters/ksante/skins/base/ksanteloadscreen_0.png",
-            "Kai'Sa":
-              "https://raw.communitydragon.org/latest/game/assets/characters/kaisa/skins/base/kaisaloadscreen.png",
-            Kalista:
-              "https://raw.communitydragon.org/latest/game/assets/characters/kalista/skins/base/kalistaloadscreen.png",
-            Karma:
-              "https://raw.communitydragon.org/latest/game/assets/characters/karma/skins/base/karmaloadscreen.png",
-            Karthus:
-              "https://raw.communitydragon.org/latest/game/assets/characters/karthus/skins/base/karthusloadscreen.png",
-            Kassadin:
-              "https://raw.communitydragon.org/latest/game/assets/characters/kassadin/skins/base/kassadinloadscreen_0.png",
-            Katarina:
-              "https://raw.communitydragon.org/latest/game/assets/characters/katarina/skins/base/katarinaloadscreen.png",
-            Kayle:
-              "https://raw.communitydragon.org/latest/game/assets/characters/kayle/skins/base/kayleloadscreen.png",
-            Kayn: "https://raw.communitydragon.org/latest/game/assets/characters/kayn/skins/base/kaynloadscreen.png",
-            Kennen:
-              "https://raw.communitydragon.org/latest/game/assets/characters/kennen/skins/base/kennenloadscreen.png",
-            "Kha'Zix":
-              "https://raw.communitydragon.org/latest/game/assets/characters/khazix/skins/base/khazixloadscreen.png",
-            Kindred:
-              "https://raw.communitydragon.org/latest/game/assets/characters/kindred/skins/base/kindredloadscreen.png",
-            Kled: "https://raw.communitydragon.org/latest/game/assets/characters/kled/skins/base/kledloadscreen.png",
-            "Kog'Maw":
-              "https://raw.communitydragon.org/latest/game/assets/characters/kogmaw/skins/base/kogmawloadscreen.png",
-            LeBlanc:
-              "https://raw.communitydragon.org/latest/game/assets/characters/leblanc/skins/base/leblancloadscreen_0.leblanc_rework.png",
-            "Lee Sin":
-              "https://raw.communitydragon.org/latest/game/assets/characters/leesin/skins/base/leesinloadscreen_0.png",
-            Leona:
-              "https://raw.communitydragon.org/latest/game/assets/characters/leona/skins/base/leonaloadscreen.png",
-            Lillia:
-              "https://raw.communitydragon.org/latest/game/assets/characters/lillia/skins/base/lillialoadscreen.png",
-            Lissandra:
-              "https://raw.communitydragon.org/latest/game/assets/characters/lissandra/skins/base/lissandraloadscreen.png",
-            Lucian:
-              "https://raw.communitydragon.org/latest/game/assets/characters/lucian/skins/base/lucianloadscreen.png",
-            Lulu: "https://raw.communitydragon.org/latest/game/assets/characters/lulu/skins/base/lululoadscreen.png",
-            Lux: "https://raw.communitydragon.org/latest/game/assets/characters/lux/skins/base/luxloadscreen.png",
-            Malphite:
-              "https://raw.communitydragon.org/latest/game/assets/characters/malphite/skins/base/malphiteloadscreen.png",
-            Malzahar:
-              "https://raw.communitydragon.org/latest/game/assets/characters/malzahar/skins/base/malzaharloadscreen.png",
-            Maokai:
-              "https://raw.communitydragon.org/latest/game/assets/characters/maokai/skins/base/maokailoadscreen.png",
-            "Master Yi":
-              "https://raw.communitydragon.org/latest/game/assets/characters/masteryi/skins/base/masteryiloadscreen.png",
-            "Miss Fortune":
-              "https://raw.communitydragon.org/latest/game/assets/characters/missfortune/skins/base/missfortuneloadscreen.png",
-            Mordekaiser:
-              "https://raw.communitydragon.org/latest/game/assets/characters/mordekaiser/skins/base/mordekaiserloadscreen.png",
-            Morgana:
-              "https://raw.communitydragon.org/latest/game/assets/characters/morgana/skins/base/morganaloadscreen.png",
-            Nami: "https://raw.communitydragon.org/latest/game/assets/characters/nami/skins/base/namiloadscreen.png",
-            Nasus:
-              "https://raw.communitydragon.org/latest/game/assets/characters/nasus/skins/base/nasusloadscreen.png",
-            Nautilus:
-              "https://raw.communitydragon.org/latest/game/assets/characters/nautilus/skins/base/nautilusloadscreen.png",
-            Neeko:
-              "https://raw.communitydragon.org/latest/game/assets/characters/neeko/skins/base/neekoloadscreen.png",
-            Nidalee:
-              "https://raw.communitydragon.org/latest/game/assets/characters/nidalee/skins/base/nidaleeloadscreen.png",
-            Nilah:
-              "https://raw.communitydragon.org/latest/game/assets/characters/nilah/skins/base/nilahloadscreen_0.png",
-            Nocturne:
-              "https://raw.communitydragon.org/latest/game/assets/characters/nocturne/skins/base/nocturneloadscreen.png",
-            "Nunu y Willump":
-              "https://raw.communitydragon.org/latest/game/assets/characters/nunu/skins/base/nunuloadscreen.png",
-            Olaf: "https://raw.communitydragon.org/latest/game/assets/characters/olaf/skins/base/olafloadscreen.png",
-            Orianna:
-              "https://raw.communitydragon.org/latest/game/assets/characters/orianna/skins/base/oriannaloadscreen.png",
-            Ornn: "https://raw.communitydragon.org/latest/game/assets/characters/ornn/skins/base/ornnloadscreen.png",
-            Pantheon:
-              "https://raw.communitydragon.org/latest/game/assets/characters/pantheon/skins/base/pantheonloadscreen.png",
-            Poppy:
-              "https://raw.communitydragon.org/latest/game/assets/characters/poppy/skins/base/poppyloadscreen.png",
-            Pyke: "https://raw.communitydragon.org/latest/game/assets/characters/pyke/skins/base/pykeloadscreen.png",
-            Qiyana:
-              "https://raw.communitydragon.org/latest/game/assets/characters/qiyana/skins/base/qiyanaloadscreen.png",
-            Quinn:
-              "https://raw.communitydragon.org/latest/game/assets/characters/quinn/skins/base/quinnloadscreen.png",
-            Rakan:
-              "https://raw.communitydragon.org/latest/game/assets/characters/rakan/skins/base/rakanloadscreen.png",
-            Rammus:
-              "https://raw.communitydragon.org/latest/game/assets/characters/rammus/skins/base/rammusloadscreen.png",
-            "Rek'Sai":
-              "https://raw.communitydragon.org/latest/game/assets/characters/reksai/skins/base/reksailoadscreen.png",
-            Rell: "https://raw.communitydragon.org/latest/game/assets/characters/rell/skins/base/rellloadscreen.png",
-            Renekton:
-              "https://raw.communitydragon.org/latest/game/assets/characters/renekton/skins/base/renektonloadscreen.png",
-            Rengar:
-              "https://raw.communitydragon.org/latest/game/assets/characters/rengar/skins/base/rengarloadscreen.png",
-            Riven:
-              "https://raw.communitydragon.org/latest/game/assets/characters/riven/skins/base/rivenloadscreen.png",
-            Rumble:
-              "https://raw.communitydragon.org/latest/game/assets/characters/rumble/skins/base/rumbleloadscreen.png",
-            Ryze: "https://raw.communitydragon.org/latest/game/assets/characters/ryze/skins/base/ryzeloadscreen.png",
-            Samira:
-              "https://raw.communitydragon.org/latest/game/assets/characters/samira/skins/base/samiraloadscreen.png",
-            Sejuani:
-              "https://raw.communitydragon.org/latest/game/assets/characters/sejuani/skins/base/sejuaniloadscreen.png",
-            Senna:
-              "https://raw.communitydragon.org/latest/game/assets/characters/senna/skins/base/sennaloadscreen.png",
-            Seraphine:
-              "https://raw.communitydragon.org/latest/game/assets/characters/seraphine/skins/base/seraphineloadscreen.png",
-            Sett: "https://raw.communitydragon.org/latest/game/assets/characters/sett/skins/base/settloadscreen.png",
-            Shaco:
-              "https://raw.communitydragon.org/latest/game/assets/characters/shaco/skins/base/shacoloadscreen.png",
-            Shen: "https://raw.communitydragon.org/latest/game/assets/characters/shen/skins/base/shenloadscreen.png",
-            Shyvana:
-              "https://raw.communitydragon.org/latest/game/assets/characters/shyvana/skins/base/shyvanaloadscreen.png",
-            Singed:
-              "https://raw.communitydragon.org/latest/game/assets/characters/singed/skins/base/singedloadscreen.png",
-            Sion: "https://raw.communitydragon.org/latest/game/assets/characters/sion/skins/base/sionloadscreen.png",
-            Sivir:
-              "https://raw.communitydragon.org/latest/game/assets/characters/sivir/skins/base/sivirloadscreen_0.png",
-            Skarner:
-              "https://raw.communitydragon.org/latest/game/assets/characters/skarner/skins/base/skarnerloadscreen_0.png",
-            Smolder:
-              "https://raw.communitydragon.org/latest/game/assets/characters/smolder/skins/base/smolderloadscreen_0.png",
-            Sona: "https://raw.communitydragon.org/latest/game/assets/characters/sona/skins/base/sonaloadscreen.png",
-            Soraka:
-              "https://raw.communitydragon.org/latest/game/assets/characters/soraka/skins/base/sorakaloadscreen.png",
-            Swain:
-              "https://raw.communitydragon.org/latest/game/assets/characters/swain/skins/base/swainloadscreen.png",
-            Sylas:
-              "https://raw.communitydragon.org/latest/game/assets/characters/sylas/skins/base/sylasloadscreen.png",
-            Syndra:
-              "https://raw.communitydragon.org/latest/game/assets/characters/syndra/skins/base/syndraloadscreen_0.png",
-            "Tahm Kench":
-              "https://raw.communitydragon.org/latest/game/assets/characters/tahmkench/skins/base/tahmkenchloadscreen.png",
-            Taliyah:
-              "https://raw.communitydragon.org/latest/game/assets/characters/taliyah/skins/base/taliyahloadscreen.png",
-            Talon:
-              "https://raw.communitydragon.org/latest/game/assets/characters/talon/skins/base/talonloadscreen.png",
-            Taric:
-              "https://raw.communitydragon.org/latest/game/assets/characters/taric/skins/base/taricloadscreen.png",
-
-            Thresh:
-              "https://raw.communitydragon.org/latest/game/assets/characters/thresh/skins/base/threshloadscreen.png",
-            Tristana:
-              "https://raw.communitydragon.org/latest/game/assets/characters/tristana/skins/base/tristanaloadscreen.png",
-            Trundle:
-              "https://raw.communitydragon.org/latest/game/assets/characters/trundle/skins/base/trundleloadscreen.png",
-            Tryndamere:
-              "https://raw.communitydragon.org/latest/game/assets/characters/tryndamere/skins/base/tryndamereloadscreen.png",
-            "Twisted Fate":
-              "https://raw.communitydragon.org/latest/game/assets/characters/twistedfate/skins/base/twistedfateloadscreen.png",
-            Twitch:
-              "https://raw.communitydragon.org/latest/game/assets/characters/twitch/skins/base/twitchloadscreen.png",
-            Udyr: "https://raw.communitydragon.org/latest/game/assets/characters/udyr/skins/base/udyrloadscreen_0.png",
-            Urgot:
-              "https://raw.communitydragon.org/latest/game/assets/characters/urgot/skins/base/urgotloadscreen.png",
-            Varus:
-              "https://raw.communitydragon.org/latest/game/assets/characters/varus/skins/base/varusloadscreen.png",
-            Vayne:
-              "https://raw.communitydragon.org/latest/game/assets/characters/vayne/skins/base/vayneloadscreen.png",
-            Veigar:
-              "https://raw.communitydragon.org/latest/game/assets/characters/veigar/skins/base/veigarloadscreen.png",
-            "Vel'Koz":
-              "https://raw.communitydragon.org/latest/game/assets/characters/velkoz/skins/base/velkozloadscreen.png",
-            Vex: "https://raw.communitydragon.org/latest/game/assets/characters/vex/skins/base/vexloadscreen_0.png",
-            Vi: "https://raw.communitydragon.org/latest/game/assets/characters/vi/skins/base/viloadscreen.png",
-            Viego:
-              "https://raw.communitydragon.org/latest/game/assets/characters/viego/skins/base/viegoloadscreen.png",
-            Viktor:
-              "https://raw.communitydragon.org/latest/game/assets/characters/viktor/skins/base/viktorloadscreen_0.viktorvgu.png",
-            Vladimir:
-              "https://raw.communitydragon.org/latest/game/assets/characters/vladimir/skins/base/vladimirloadscreen.png",
-            Volibear:
-              "https://raw.communitydragon.org/latest/game/assets/characters/volibear/skins/base/volibearloadscreen.png",
-            Warwick:
-              "https://raw.communitydragon.org/latest/game/assets/characters/warwick/skins/base/warwickloadscreen.png",
-            Wukong:
-              "https://raw.communitydragon.org/latest/game/assets/characters/monkeyking/skins/base/monkeykingloadscreen.png",
-            Xayah:
-              "https://raw.communitydragon.org/latest/game/assets/characters/xayah/skins/base/xayahloadscreen.png",
-            Xerath:
-              "https://raw.communitydragon.org/latest/game/assets/characters/xerath/skins/base/xerathloadscreen.png",
-
-            Yasuo:
-              "https://raw.communitydragon.org/latest/game/assets/characters/yasuo/skins/base/yasuoloadscreen.png",
-            Yone: "https://raw.communitydragon.org/latest/game/assets/characters/yone/skins/base/yoneloadscreen.png",
-            Yorick:
-              "https://raw.communitydragon.org/latest/game/assets/characters/yorick/skins/base/yorickloadscreen.png",
-            Yuumi:
-              "https://raw.communitydragon.org/latest/game/assets/characters/yuumi/skins/base/yuumiloadscreen.png",
-            Zac: "https://raw.communitydragon.org/latest/game/assets/characters/zac/skins/base/zacloadscreen.png",
-            Zed: "https://raw.communitydragon.org/latest/game/assets/characters/zed/skins/base/zedloadscreen.png",
-            Zeri: "https://raw.communitydragon.org/latest/game/assets/characters/zeri/skins/base/zeriloadscreen_0.png",
-            Ziggs:
-              "https://raw.communitydragon.org/latest/game/assets/characters/ziggs/skins/base/ziggsloadscreen.png",
-            Zilean:
-              "https://raw.communitydragon.org/latest/game/assets/characters/zilean/skins/base/zileanloadscreen.png",
-            Zoe: "https://raw.communitydragon.org/latest/game/assets/characters/zoe/skins/base/zoeloadscreen.png",
-            Zyra: "https://raw.communitydragon.org/latest/game/assets/characters/zyra/skins/base/zyraloadscreen.png",
-          };
-          // ...fin del objeto loadscreenMap correctamente definido...
-          // --- HISTORIAL DE CAMPEONES SELECCIONADOS ---
-          const HISTORIAL_KEY = "historial_campeones";
-          function getHistorial() {
-            try {
-              return JSON.parse(localStorage.getItem(HISTORIAL_KEY)) || [];
-            } catch {
-              return [];
-            }
-          }
-          function setHistorial(historial) {
-            localStorage.setItem(HISTORIAL_KEY, JSON.stringify(historial));
-          }
-          function renderHistorial() {
-            const historial = getHistorial();
-            const cont = document.getElementById("historial-campeones");
-            cont.innerHTML = "";
-            historial.forEach((champion, idx) => {
-              const div = document.createElement("div");
-              div.className = "champion-historial-item";
-              div.style =
-                "width: 60px; height: 80px; background: #23272f; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #444;";
-              div.title = champion;
-              // Imagen del campeón
-              const img = document.createElement("img");
-              img.src = loadscreenMap[champion] || "";
-              img.alt = champion;
-              img.style =
-                "width: 48px; height: 48px; object-fit: cover; border-radius: 6px; margin-bottom: 2px;";
-              div.appendChild(img);
-              // Nombre
-              const label = document.createElement("span");
-              label.textContent = champion;
-              label.style =
-                "font-size: 11px; color: #f5c518; text-align: center;";
-              div.appendChild(label);
-              // Click para seleccionar
-              div.onclick = () => {
-                recommendedChampion = champion;
-                loadChampions(
-                  document.getElementById("championSearch").value,
-                  currentRole
-                );
-              };
-              cont.appendChild(div);
+          let champions = championsCache.filter((name) =>
+            name.toLowerCase().includes(search.toLowerCase())
+          );
+          if (role !== "all") {
+            champions = champions.filter((name) => {
+              const roles = championRoles[name] || [];
+              return roles.includes(role);
             });
           }
-          function addToHistorial(champion) {
-            let historial = getHistorial();
-            historial = historial.filter((c) => c !== champion);
-            historial.unshift(champion);
-            if (historial.length > 10) historial = historial.slice(0, 10); // máximo 10
-            setHistorial(historial);
-            renderHistorial();
-          }
-          // Exponer la función al ámbito global
-          window.addToHistorial = addToHistorial;
-          // Renderizar historial al cargar
-          document.addEventListener("DOMContentLoaded", renderHistorial);
-          // --- FIN HISTORIAL ---
-          // ...fin del objeto loadscreenMap correctamente definido...
-          // Filtrar campeones por búsqueda y rol
-          // ...existing code...
-        } // <-- Add this closing brace to end loadChampions function
-        
+          grid.innerHTML = "";
 
-      // Inicializar y conectar barra de búsqueda y botones de rol
-      document.addEventListener("DOMContentLoaded", () => {
+          champions.forEach((name) => {
+            let champKey = iconMap[name.toLowerCase()] || name;
+            let loadscreenUrl = loadscreenMap[name] ||
+              `https://raw.communitydragon.org/latest/game/assets/characters/${normalizeChampionName(name)}/skins/base/${normalizeChampionName(name)}loadscreen.png`;
+
+            const col = document.createElement("div");
+            col.className = "col-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center";
+            const card = document.createElement("div");
+            card.className = "champion-card card bg-dark-custom border-0 mb-2 position-relative";
+            card.style.width = "180px";
+            card.style.cursor = "pointer";
+
+            // Advertencia de status
+            if (statusData && statusData[name]) {
+              const alertDiv = document.createElement("div");
+              alertDiv.className = "alert alert-warning p-2 position-absolute top-0 end-0 m-2";
+              alertDiv.style.zIndex = 10;
+              let warnings = statusData[name];
+              if (!Array.isArray(warnings)) warnings = [warnings];
+              alertDiv.innerHTML = warnings.map(w => `<b>${w.skin}</b>: ${w.descripcion}`).join('<br><br>');
+              card.appendChild(alertDiv);
+            }
+
+            const img = document.createElement("img");
+            img.src = loadscreenUrl;
+            img.alt = name;
+            img.className = "card-img-top";
+            img.onerror = function () {
+              img.src = "https://static.wikia.nocookie.net/leagueoflegends/images/6/6e/Champion.png";
+            };
+            card.appendChild(img);
+
+            const label = document.createElement("div");
+            label.textContent = champKey;
+            label.className = "champion-label card-footer text-center";
+            card.appendChild(label);
+
+            card.addEventListener("click", () => {
+              window.location.href = `skins.html?champion=${encodeURIComponent(normalizeChampionName(name))}`;
+            });
+
+            col.appendChild(card);
+            grid.appendChild(col);
+          });
+        } catch (e) {
+          grid.innerHTML = "<p>Error al cargar campeones.</p>";
+        }
+      }
+
+      // --- Inicialización de eventos ---
+      function initEvents() {
         const searchInput = document.getElementById("championSearch");
         if (searchInput) {
           searchInput.addEventListener("input", (e) => {
             loadChampions(e.target.value, currentRole);
           });
         }
-        // Botones de filtro de rol
-        document.querySelectorAll("#roleFilters button").forEach((btn) => {
-          btn.addEventListener("click", function () {
-            document
-              .querySelectorAll("#roleFilters button")
-              .forEach((b) => b.classList.remove("active"));
-            this.classList.add("active");
-            currentRole = this.getAttribute("data-role");
+        document.querySelectorAll('#roleFilters button').forEach(btn => {
+          btn.addEventListener('click', function() {
+            document.querySelectorAll('#roleFilters button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentRole = this.getAttribute('data-role');
             loadChampions(searchInput.value, currentRole);
           });
         });
-        // Marcar "Todos" como activo al inicio
-        document
-          .querySelector('#roleFilters button[data-role="all"]')
-          .classList.add("active");
-        loadChampions();
-        // Escuchar campeón recomendado desde Electron
-        if (window.skinsAPI && window.skinsAPI.onChampionSelected) {
-          window.skinsAPI.onChampionSelected((championName) => {
-            recommendedChampion = championName;
-            addToHistorial(championName);
-            loadChampions(
-              searchInput.value,
-              currentRole
-            );
-          });
-        }
-      });
+        document.querySelector('#roleFilters button[data-role="all"]').classList.add('active');
 
-      // Cambiar directorio de descarga
-      document
-        .getElementById("changeDir")
-        .addEventListener("click", async () => {
+        document.getElementById("changeDir").addEventListener("click", async () => {
           const dir = await window.skinsAPI.changeDownloadDir();
-          if (dir) {
-            alert("Directorio cambiado a: " + dir);
-          }
+          if (dir) alert("Directorio cambiado a: " + dir);
         });
-      document.getElementById("settingsBtn").addEventListener("click", () => {
-        const modal = new bootstrap.Modal(
-          document.getElementById("settingsModal")
-        );
-        // Cargar token guardado si existe
-        document.getElementById("githubToken").value =
-          localStorage.getItem("github_token") || "";
-        modal.show();
-      });
 
-      document.getElementById("saveTokenBtn").addEventListener("click", () => {
-        const token = document.getElementById("githubToken").value.trim();
-        localStorage.setItem("github_token", token);
-        // Después de guardar el token:
-        window.skinsAPI.setToken(token);
-        alert("Token guardado correctamente.");
-        bootstrap.Modal.getInstance(
-          document.getElementById("settingsModal")
-        ).hide();
-      });
+        document.getElementById("settingsBtn").addEventListener("click", () => {
+          const modal = new bootstrap.Modal(document.getElementById('settingsModal'));
+          document.getElementById("githubToken").value = localStorage.getItem("github_token") || "";
+          modal.show();
+        });
 
-      // Al cargar la página, pasar el token guardado a preload.js
+        document.getElementById("saveTokenBtn").addEventListener("click", () => {
+          const token = document.getElementById("githubToken").value.trim();
+          localStorage.setItem("github_token", token);
+          window.skinsAPI.setToken(token);
+          alert("Token guardado correctamente.");
+          bootstrap.Modal.getInstance(document.getElementById('settingsModal')).hide();
+        });
+      }
+
+      // --- Inicialización principal ---
       document.addEventListener("DOMContentLoaded", () => {
         const savedToken = localStorage.getItem("github_token");
         if (savedToken) window.skinsAPI.setToken(savedToken);
+        initEvents();
+        loadChampions();
       });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
