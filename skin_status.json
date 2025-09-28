@@ -1,22 +1,19 @@
 {
-  "Viego": {
+  "Viego": 
+  [    
+    {
     "skin": "King Viego",
     "descripcion": "Skin se ve completamente blanca"
-  },
-  "Yasuo": {
-    "skin": "PROYECTO",
-    "descripcion": "El archivo está corrupto, no se puede extraer."
-  },
-  "Lux": {
-    "skin": "Elementalista",
-    "descripcion": "Faltan archivos en el zip, la skin no se instala correctamente."
-  },  
-"Kindred": {
-    "skin":"Chosen of the Wolf Kindred",
-    "descripcion":"Skin se ve completamente blanca"
-  },
-    "Ahri": {
+    },
+    {
     "skin": "Dissonance of Pentakill Viego",
     "descripcion": "Skin se ve completamente blanca"
+    }
+  ],
+"Kindred": [
+  {
+    "skin":"Chosen of the Wolf Kindred",
+    "descripcion":"Skin se ve completamente blanca"
   }
+]
 }
