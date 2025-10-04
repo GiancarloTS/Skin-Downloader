@@ -69,11 +69,16 @@ contextBridge.exposeInMainWorld('skinsAPI', {
 		// Usar el raw de GitHub para obtener el JSON actualizado
 		const url = 'https://raw.githubusercontent.com/GiancarloTS/Skin-Downloader/main/skin_status.json';
 		try {
-			const response = await fetch(url);
+			const response = await fetch(url, { cache: "no-store" });
 			if (!response.ok) return {};
 			return await response.json();
 		} catch (e) {
 			return {};
 		}
 	}
+,
+    async getPickedChampion() {
+        // Consulta al backend por el campeón pickeado
+        return await ipcRenderer.invoke('get-picked-champion');
+    }
 	});

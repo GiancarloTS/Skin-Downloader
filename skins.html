@@ -1,518 +1,475 @@
 <!DOCTYPE html>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-  body {
-    background: #181a20;
-    color: #e0e0e0;
-    font-family: "Segoe UI", Arial, sans-serif;
-  }
-  .bg-dark-custom {
-    background: #23272f !important;
-  }
-  .btn-gold {
-    background: #f5c518;
-    color: #23272f;
-    border: none;
-    font-weight: bold;
-  }
-  .btn-gold:hover {
-    background: #ffe066;
-    color: #181a20;
-  }
-</style>
-<body>
-  <nav class="navbar navbar-dark bg-dark-custom " style="border-radius:10px;">
+
+<head>
+  <link rel="stylesheet" href="skins.css">
+  <script src="champIdMap.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+
+<body id="pete">
+  <nav class="navbar navbar-dark bg-dark-custom fixed-top ">
     <div class="container-fluid position-relative justify-content-center">
-      <button id="backBtn" class="btn btn-gold position-absolute start-0" style="left: 1px;">← Volver</button>
-      <span id="navbarTitle" class="navbar-brand fw-bold mx-auto text-center w-100" style="color:#f5c518; font-size:2.4rem;">Skins de Ahri</span>
+      <button id="backBtn" class="btn btn-gold position-absolute m-2" style="left: 5px;">← Volver</button>
+      <span id="navbarTitle" class="navbar-brand fw-bold mx-auto text-center w-100"
+        style="color:#c4a15b; font-size:2.4rem;">Skins de Ahri</span>
     </div>
   </nav>
   <div class="container min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
-    <div id="carouselContainer" class="mt-1 d-flex flex-column align-items-center w-100"></div>
+    <div id="carouselContainer" class=" d-flex flex-column align-items-center vw-100 "></div>
+    <div id="skinAlerts" class="w-100 mt-4" style="max-width:700px;"></div>
   </div>
-<script>
-const savedToken = localStorage.getItem("github_token");
-if (savedToken) window.skinsAPI.setToken(savedToken);
+  <script>
+    const savedToken = localStorage.getItem("github_token");
+    if (savedToken) window.skinsAPI.setToken(savedToken);
 
-// Obtener parámetros de campeón por querystring
-// Normaliza el nombre igual que en index.html
-function normalizeChampionName(name) {
-  return name
-    .toLowerCase()
-    .replace(/á/g, 'a')
-    .replace(/é/g, 'e')
-    .replace(/í/g, 'i')
-    .replace(/ó/g, 'o')
-    .replace(/ú/g, 'u')
-    .replace(/ñ/g, 'n')
-    .replace(/[^a-z0-9]/g, '');
-}
-// Busca el nombre real del campeón a partir del nombre normalizado
-function getChampionFromQuery() {
-  const params = new URLSearchParams(window.location.search);
-  const champNorm = params.get('champion');
-  if (!champNorm) return null;
-  // Buscar el nombre real en el diccionario champIdMap, comparando normalizados
-  for (const realName in champIdMap) {
-    if (normalizeChampionName(realName) === champNorm || normalizeChampionName(realName) === normalizeChampionName(champNorm)) {
-      return realName;
-    }
-  }
-  return null;
-}
-// Diccionario nombre -> id
-const champIdMap = {
-  "Aatrox":266,"Ahri":103,"Akali":84,"Akshan":166,"Alistar":12,"Ambessa":799,"Amumu":32,"Anivia":34,"Annie":1,"Aphelios":523,"Ashe":22,"Aurelion Sol":136,"Aurora":893,"Azir":268,"Bard":432,"Bel'Veth":200,"Blitzcrank":53,"Brand":63,"Braum":201,"Briar":233,"Caitlyn":51,"Camille":164,"Cassiopeia":69,"Cho'Gath":31,"Corki":42,"Darius":122,"Diana":131,"Draven":119,"Dr. Mundo":36,"Ekko":245,"Elise":60,"Evelynn":28,"Ezreal":81,"Fiddlesticks":9,"Fiora":114,"Fizz":105,"Galio":3,"Gangplank":41,"Garen":86,"Gnar":150,"Gragas":79,"Graves":104,"Gwen":887,"Hecarim":120,"Heimerdinger":74,"Hwei":910,"Illaoi":420,"Irelia":39,"Ivern":427,"Janna":40,"Jarvan IV":59,"Jax":24,"Jayce":126,"Jhin":202,"Jinx":222,"Kai'Sa":145,"Kalista":429,"Karma":43,"Karthus":30,"Kassadin":38,"Katarina":55,"Kayle":10,"Kayn":141,"Kennen":85,"Kha'Zix":121,"Kindred":203,"Kled":240,"Kog'Maw":96,"K'Sante":897,"LeBlanc":7,"Lee Sin":64,"Leona":89,"Lillia":876,"Lissandra":127,"Lucian":236,"Lulu":117,"Lux":99,"Malphite":54,"Malzahar":90,"Maokai":57,"Master Yi":11,"Mel":800,"Milio":902,"Miss Fortune":21,"Wukong":62,"Mordekaiser":82,"Morgana":25,"Naafiri":950,"Nami":267,"Nasus":75,"Nautilus":111,"Neeko":518,"Nidalee":76,"Nilah":895,"Nocturne":56,"Nunu":20,"Olaf":2,"Orianna":61,"Ornn":516,"Pantheon":80,"Poppy":78,"Pyke":555,"Qiyana":246,"Quinn":133,"Rakan":497,"Rammus":33,"Rek'Sai":421,"Rell":526,"Renata":888,"Renekton":58,"Rengar":107,"Riven":92,"Rumble":68,"Ryze":13,"Samira":360,"Sejuani":113,"Senna":235,"Seraphine":147,"Sett":875,"Shaco":35,"Shen":98,"Shyvana":102,"Singed":27,"Sion":14,"Sivir":15,"Skarner":72,"Smolder":901,"Sona":37,"Soraka":16,"Swain":50,"Sylas":517,"Syndra":134,"Tahm Kench":223,"Taliyah":163,"Talon":91,"Taric":44,"Teemo":17,"Thresh":412,"Tristana":18,"Trundle":48,"Tryndamere":23,"Twisted Fate":4,"Twitch":29,"Udyr":77,"Urgot":6,"Varus":110,"Vayne":67,"Veigar":45,"Vel'Koz":161,"Vex":711,"Vi":254,"Viego":234,"Viktor":112,"Vladimir":8,"Volibear":106,"Warwick":19,"Xayah":498,"Xerath":101,"Xin Zhao":5,"Yasuo":157,"Yone":777,"Yorick":83,"Yunara":804,"Yuumi":350,"Zac":154,"Zed":238,"Zeri":221,"Ziggs":115,"Zilean":26,"Zoe":142,"Zyra":143
-};
-// --- CACHÉ EN MEMORIA PARA PETICIONES GITHUB ---
-const githubCache = {};
-async function fetchGithubCached(url) {
-  if (githubCache[url]) return githubCache[url];
-  const res = await window.skinsAPI.fetchGithub(url);
-  githubCache[url] = res;
-  return res;
-}
-// Añade esta función arriba de loadSkins()
-async function findChromaFolder(champion, skinName) {
-  // Lista todas las carpetas de chromas para el campeón
-  const chromasRootUrl = `https://api.github.com/repos/lingyRTX/lol-skins/contents/skins/${encodeURIComponent(champion)}/chromas`;
-  try {
-    const res = await fetchGithubCached(chromasRootUrl);
-    if (!res.ok) return null;
-    const folders = await res.json();
-    // Normaliza nombres para comparar (quita acentos, mayúsculas, espacios, guiones, puntos, etc.)
-    function norm(str) {
-      return str
+    const champIdMap = window.champIdMap;
+    const githubCache = {};
+
+    function normalizeChampionName(name) {
+      return name
         .toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quita acentos
-        .replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n')
+        .replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i')
+        .replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n')
         .replace(/[^a-z0-9]/g, '');
     }
-    // Quitar números al final (como ' 266004') y la extensión .zip
-    const skinNorm = norm(skinName.replace(/\s*\d+\.zip$/i, '').replace(/\.zip$/i, ''));
-    // Busca coincidencia exacta
-    let folder = folders.find(f => norm(f.name) === skinNorm);
-    // Si no hay exacta, busca coincidencia parcial (ambos sentidos)
-    if (!folder) {
-      folder = folders.find(f => norm(f.name).includes(skinNorm) || skinNorm.includes(norm(f.name)));
+
+    function getChampionFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const champNorm = params.get('champion');
+      if (!champNorm) return null;
+      for (const realName in champIdMap) {
+        if (normalizeChampionName(realName) === champNorm ||
+          normalizeChampionName(realName) === normalizeChampionName(champNorm)) {
+          return realName;
+        }
+      }
+      return null;
     }
-    // Si sigue sin encontrar, busca por palabras clave (al menos 2 palabras iguales)
-    if (!folder) {
-      const skinWords = skinNorm.split(/\s+/).filter(Boolean);
-      folder = folders.find(f => {
-        const folderWords = norm(f.name).split(/\s+/).filter(Boolean);
-        const matches = skinWords.filter(w => folderWords.includes(w));
-        return matches.length >= 2;
+
+    async function fetchGithubCached(url) {
+      if (githubCache[url]) return githubCache[url];
+      const res = await window.skinsAPI.fetchGithub(url);
+      githubCache[url] = res;
+      return res;
+    }
+
+    async function findChromaFolder(champion, skinName) {
+      const chromasRootUrl = `https://api.github.com/repos/lingyRTX/lol-skins/contents/skins/${encodeURIComponent(champion)}/chromas`;
+      try {
+        const res = await fetchGithubCached(chromasRootUrl);
+        if (!res.ok) return null;
+        const folders = await res.json();
+        const norm = str => str
+          .toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]/g, '');
+        const skinNorm = norm(skinName.replace(/\s*\d+\.zip$/i, '').replace(/\.zip$/i, ''));
+        let folder = folders.find(f => norm(f.name) === skinNorm)
+          || folders.find(f => norm(f.name).includes(skinNorm) || skinNorm.includes(norm(f.name)))
+          || folders.find(f => {
+            const skinWords = skinNorm.split(/\s+/);
+            const folderWords = norm(f.name).split(/\s+/);
+            return skinWords.filter(w => folderWords.includes(w)).length >= 2;
+          });
+        return folder ? folder.name : null;
+      } catch { return null; }
+    }
+
+    async function loadSkins() {
+      const champion = getChampionFromQuery();
+      const container = document.getElementById("carouselContainer");
+      const navbarTitle = document.getElementById("navbarTitle");
+      const alertsContainer = document.getElementById("skinAlerts");
+      if (!champion) {
+        container.innerHTML = '<div class="text-danger text-center">No se especificó campeón.</div>';
+        navbarTitle.textContent = '';
+        alertsContainer.innerHTML = '';
+        return;
+      }
+      navbarTitle.textContent = `Skins de ${champion}`;
+container.innerHTML = `
+  <div class='d-flex flex-column align-items-center justify-content-center' style='height:100px;'>
+    <div class='spinner-border mb-2' role='status' style='color:#c4a15b;font-size:20px;'>
+      <span class='visually-hidden'>Cargando...</span>
+    </div>
+    <div class='text-center' style='color:#c4a15b;font-size:20px;'>Cargando skins...</div>
+  </div>
+`;
+      alertsContainer.innerHTML = '';
+      let champId = champIdMap[champion];
+      if (!champId) {
+        container.innerHTML = `<div class='text-danger text-center'>No se encontró la ID del campeón.</div>`;
+        alertsContainer.innerHTML = '';
+        return;
+      }
+      let champData;
+      try {
+        const res = await fetch(`https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champions/${champId}.json`);
+        champData = await res.json();
+      } catch {
+        container.innerHTML = `<div class='text-danger text-center'>No se pudo obtener la información del campeón.</div>`;
+        alertsContainer.innerHTML = '';
+        return;
+      }
+      const repoSkins = await window.skinsAPI.getSkins(champion);
+      if (!repoSkins.length) {
+        container.innerHTML = `<h3 class='text-center'>Skins de ${champion}</h3><p class='text-center'>No hay skins .zip disponibles.</p>`;
+        alertsContainer.innerHTML = '';
+        return;
+      }
+      // Mostrar alertas de skins desde skin_status.json
+      try {
+        const statusData = await window.skinsAPI.getChampionStatus();
+        if (statusData && statusData[champion]) {
+          let alerts = statusData[champion];
+          if (!Array.isArray(alerts)) alerts = [alerts];
+          alertsContainer.innerHTML = `
+            <div class="list-group mb-4">
+              ${alerts.map(a => `
+                <div class="list-group-item list-group-item-warning d-flex flex-column align-items-start p-2 mb-2 mt-5 border border-warning-subtle rounded-3">
+                  <div class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-2"></i>${a.skin}</div>
+                  <div>${a.descripcion}</div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        } else {
+          alertsContainer.innerHTML = '';
+        }
+      } catch { alertsContainer.innerHTML = ''; }
+
+      // Verificar chromas disponibles
+      const chromasAvailable = {};
+      await Promise.all(repoSkins.map(async skin => {
+        let chromaFolder = await findChromaFolder(champion, skin.name);
+        chromasAvailable[skin.name] = chromaFolder || null;
+      }));
+
+      // Precargar todas las imágenes de las skins
+      repoSkins.forEach(skin => {
+        let splashUrl = '';
+        // Repite la lógica que usas para obtener splashUrl en el render
+        if (champData && champData.skins) {
+          const normalizeName = str => str.replace(/\.zip$/i, '').replace(/[_\-]/g, ' ').replace(/k\s*da/gi, 'kda').replace(/\s+/g, ' ').replace(/[^a-z0-9 ]/gi, '').toLowerCase().trim();
+          let skinNameNorm = normalizeName(skin.name);
+          let cdSkin = champData.skins.find(s => normalizeName(s.name) === skinNameNorm)
+            || champData.skins.find(s => normalizeName(s.name).includes(skinNameNorm) || skinNameNorm.includes(normalizeName(s.name)));
+          if (cdSkin && cdSkin.splashPath) {
+            splashUrl = 'https://raw.communitydragon.org/latest' + cdSkin.splashPath.replace('/lol-game-data/assets/ASSETS/', '/plugins/rcp-be-lol-game-data/global/default/assets/').toLowerCase();
+          }
+        }
+        if (!splashUrl) splashUrl = 'https://static.wikia.nocookie.net/leagueoflegends/images/6/6e/Champion.png';
+        const preloadImg = new Image();
+        preloadImg.src = splashUrl;
       });
-    }
-    return folder ? folder.name : null;
-  } catch {
-    return null;
-  }
-}
-      async function loadSkins() {
-        const champion = getChampionFromQuery();
-        const container = document.getElementById("carouselContainer");
-        const navbarTitle = document.getElementById("navbarTitle");
-        if (!champion) {
-          container.innerHTML = '<div class="text-danger text-center">No se especificó campeón.</div>';
-          navbarTitle.textContent = '';
-          return;
-        }
-        navbarTitle.textContent = `Skins de ${champion}`;
-        container.innerHTML = `<div class='d-flex flex-column align-items-center justify-content-center' style='height:300px;'><div class='spinner-border text-warning mb-2' role='status'><span class='visually-hidden'>Cargando...</span></div><div class='text-warning text-center'>Cargando skins...</div></div>`;
-        // Obtener ID del campeón
-        let champId = champIdMap[champion];
-        if (!champId) {
-          container.innerHTML = `<div class='text-danger text-center'>No se encontró la ID del campeón.</div>`;
-          return;
-        }
-        // Descargar JSON del campeón
-        let champData;
-        try {
-          const res = await fetch(`https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champions/${champId}.json`);
-          champData = await res.json();
-        } catch {
-          container.innerHTML = `<div class='text-danger text-center'>No se pudo obtener la información del campeón.</div>`;
-          return;
-        }
-        // Obtener skins reales del repositorio GitHub
-        const repoSkins = await window.skinsAPI.getSkins(champion);
-        if (!repoSkins.length) {
-          container.innerHTML = `<h3 class='text-center'>Skins de ${champion}</h3><p class='text-center'>No hay skins .zip disponibles.</p>`;
-          return;
-        }
-        // Verificar disponibilidad de chromas
-        const chromasAvailable = {};
-        await Promise.all(repoSkins.map(async skin => {
-            let chromaFolder = await findChromaFolder(champion, skin.name);
-            if (!chromaFolder) {
-              chromasAvailable[skin.name] = null;
-              return;
+
+      // Carrusel
+      let current = 0;
+      const max = repoSkins.length;
+      container.innerHTML = `
+  <div id='carousel3d' class='d-flex justify-content-center align-items-center position-relative ' style='width:700px;height:480px;'>
+    <button id='prevBtn' class='btn btn-gold' style='position:absolute;left:10px;top:50%;transform:translateY(-50%);z-index:10;font-size:2.5rem;width:56px;height:56px;56px;border-radius:12px;padding:25px;box-shadow:0 2px 8px #c9c9c955;opacity:0.85;display:flex;align-items:center;justify-content:center;'>
+      <i class="bi bi-arrow-left"></i>
+    </button>
+    <div id='cardsWrapper' class='d-flex justify-content-center align-items-center' style='width:100%;height:100%;position:relative;'></div>
+    <button id='nextBtn' class='btn btn-gold' style='position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:10;font-size:2.5rem;width:56px;height:56px;border-radius:12px;padding:25px;box-shadow:0 2px 8px #c9c9c955;opacity:0.85;display:flex;align-items:center;justify-content:center;'>
+      <i class="bi bi-arrow-right "></i>
+    </button>
+  </div>
+  <div id='carouselDots' class='d-flex justify-content-center' ></div>
+`;
+      const cardsWrapper = container.querySelector('#cardsWrapper');
+      const prevBtn = container.querySelector('#prevBtn');
+      const nextBtn = container.querySelector('#nextBtn');
+      const dots = container.querySelector('#carouselDots');
+
+      function renderCarousel() {
+        cardsWrapper.innerHTML = '';
+        dots.innerHTML = '';
+        for (let i = -2; i <= 2; i++) {
+          let idx = (current + i + max) % max;
+          let skin = repoSkins[idx];
+          let pos = i;
+          const card = document.createElement('div');
+          card.className = pos === 0 ? 'skin-card active' : 'skin-card';
+          card.style.width = '340px';
+          card.style.height = '420px';
+          card.style.position = 'absolute';
+          card.style.left = `calc(50% + ${pos * 360}px - 170px)`; // Aumenta el espacio entre tarjetas
+          card.style.top = '20px';
+          let scale = pos === 0 ? 1 : 0.85;
+          let opacity = Math.abs(pos) > 2 ? 0 : (pos === 0 ? 1 : 0.7);
+          card.style.transform = `scale(${scale}) rotateY(${pos * 25}deg)`;
+          card.style.zIndex = `${5 - Math.abs(pos)}`;
+          card.style.transition = 'all 0.5s cubic-bezier(.4,2,.3,1)';
+          card.style.boxShadow = pos === 0 ? '0 12px 40px #c9c9c955' : '0 2px 8px #0003';
+          card.style.opacity = opacity;
+
+          // Imagen
+          let splashUrl = '';
+          if (champData && champData.skins) {
+            const normalizeName = str => str.replace(/\.zip$/i, '').replace(/[_\-]/g, ' ').replace(/k\s*da/gi, 'kda').replace(/\s+/g, ' ').replace(/[^a-z0-9 ]/gi, '').toLowerCase().trim();
+            let skinNameNorm = normalizeName(skin.name);
+            let cdSkin = champData.skins.find(s => normalizeName(s.name) === skinNameNorm)
+              || champData.skins.find(s => normalizeName(s.name).includes(skinNameNorm) || skinNameNorm.includes(normalizeName(s.name)));
+            if (cdSkin && cdSkin.splashPath) {
+              splashUrl = 'https://raw.communitydragon.org/latest' + cdSkin.splashPath.replace('/lol-game-data/assets/ASSETS/', '/plugins/rcp-be-lol-game-data/global/default/assets/').toLowerCase();
             }
-            const chromaApiUrl = `https://api.github.com/repos/lingyRTX/lol-skins/contents/skins/${encodeURIComponent(champion)}/chromas/${encodeURIComponent(chromaFolder)}`;
+          }
+          if (!splashUrl) splashUrl = 'https://static.wikia.nocookie.net/leagueoflegends/images/6/6e/Champion.png';
+          const img = document.createElement('img');
+          img.src = splashUrl;
+          img.alt = skin.name;
+          img.loading = 'lazy';
+          img.style.width = '100%';
+          img.style.height = 'auto';
+          img.style.objectFit = 'contain';
+          img.style.borderTopLeftRadius = '16px';
+          img.style.borderTopRightRadius = '16px';
+          img.onerror = function () { img.src = 'https://static.wikia.nocookie.net/leagueoflegends/images/6/6e/Champion.png'; };
+          card.appendChild(img);
+
+          // Nombre
+          const name = document.createElement('div');
+          name.textContent = skin.name.replace(/\.zip$/i, '');
+          name.style.color = '#c4a15b';
+          name.style.fontWeight = pos === 0 ? 'bold' : 'normal';
+          name.style.fontSize = pos === 0 ? '1.3rem' : '1.1rem';
+          name.className = 'text-center mb-2 mt-2';
+          card.appendChild(name);
+
+          // Botón Descargar
+          const btn = document.createElement('button');
+          btn.textContent = 'Descargar';
+          btn.className = 'btn btn-gold mb-3 px-4 py-2';
+          btn.style.fontSize = '1.1rem';
+          btn.onclick = async () => {
+            btn.disabled = true;
+            btn.textContent = 'Descargando...';
             try {
-              const res = await fetchGithubCached(chromaApiUrl);
-              chromasAvailable[skin.name] = res.ok ? chromaFolder : null;
-            } catch {
-              chromasAvailable[skin.name] = null;
+              await window.skinsAPI.downloadSkin(skin.download_url, skin.name);
+              btn.textContent = 'Descargado';
+            } catch (e) {
+              btn.textContent = 'Error';
+              alert('Error al descargar: ' + e.message);
             }
-        }));
-        // Carrusel 3D con archivos zip reales
-        let current = 0;
-        const max = repoSkins.length;
-        container.innerHTML = `
-          <h3 class='text-center mb-4'>Skins de ${champion}</h3>
-          <div id='carousel3d' class='d-flex justify-content-center align-items-center position-relative' style='width:700px;height:480px;'>
-            <button id='prevBtn' class='btn btn-gold' style='position:absolute;left:10px;top:50%;transform:translateY(-50%);z-index:10;font-size:2.5rem;width:56px;height:56px;border-radius:50%;box-shadow:0 2px 8px #0006;opacity:0.95;display:flex;align-items:center;justify-content:center;'>&#8592;</button>
-            <div id='cardsWrapper' class='d-flex justify-content-center align-items-center' style='width:100%;height:100%;position:relative;'></div>
-            <button id='nextBtn' class='btn btn-gold' style='position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:10;font-size:2.5rem;width:56px;height:56px;border-radius:50%;box-shadow:0 2px 8px #0006;opacity:0.95;display:flex;align-items:center;justify-content:center;'>&#8594;</button>
-          </div>
-          <div id='carouselDots' class='d-flex justify-content-center mt-3'></div>
-        `;
-        const cardsWrapper = container.querySelector('#cardsWrapper');
-        const prevBtn = container.querySelector('#prevBtn');
-        const nextBtn = container.querySelector('#nextBtn');
-        const dots = container.querySelector('#carouselDots');
+            setTimeout(() => {
+              btn.disabled = false;
+              btn.textContent = 'Descargar';
+            }, 2000);
+          };
+          card.appendChild(btn);
 
-        function renderCarousel() {
-          // Si ya hay slides, solo actualiza los necesarios
-          if (cardsWrapper.children.length === max) {
-            // Solo cambia clases, estilos y contenido de los 5 visibles
-            for (let i = 0; i < max; i++) {
-              const card = cardsWrapper.children[i];
-              let pos = (i - current + max) % max;
-              if (pos > 2) pos -= max;
-              card.style.left = `calc(50% + ${pos*180}px - 170px)`;
-              card.style.zIndex = `${5-Math.abs(pos)}`;
-              card.style.opacity = Math.abs(pos)>2 ? 0 : (pos===0?1:0.6);
-              card.style.transform = `scale(${pos===0?1:0.8}) rotateY(${pos*25}deg)`;
-              card.style.boxShadow = pos===0 ? '0 8px 32px #0008' : '0 2px 8px #0003';
-              card.style.height = (pos===0?300:220) + 'px';
-              card.querySelector('div.text-center.mb-2.mt-2').style.fontWeight = pos===0 ? 'bold' : 'normal';
-              card.querySelector('div.text-center.mb-2.mt-2').style.fontSize = pos===0 ? '1.3rem' : '1.1rem';
-            }
-            // Actualizar dots
-            Array.from(dots.children).forEach((dot, i) => {
-              dot.style.background = i===current?'#f5c518':'#444';
-            });
-            return;
-          }
-          cardsWrapper.innerHTML = '';
-          dots.innerHTML = '';
-          let visible = [];
-          for (let i = -2; i <= 2; i++) {
-            let idx = (current + i + max) % max;
-            visible.push({skin: repoSkins[idx], pos: i});
-          }
-          visible.forEach(({skin, pos}, i) => {
-            const card = document.createElement('div');
-            card.className = 'bg-dark-custom shadow rounded d-flex flex-column align-items-center justify-content-between';
-            card.style.width = '340px';
-            card.style.height = '420px';
-            card.style.position = 'absolute';
-            card.style.left = `calc(50% + ${pos*180}px - 170px)`;
-            card.style.top = '20px';
-            let scale = pos === 0 ? 1 : 0.8;
-            let imgHeight = pos === 0 ? 300 : 220;
-            let opacity = Math.abs(pos)>2 ? 0 : (pos===0?1:0.6);
-            card.style.transform = `scale(${scale}) rotateY(${pos*25}deg)`;
-            card.style.zIndex = `${5-Math.abs(pos)}`;
-            card.style.transition = 'all 0.5s cubic-bezier(.4,2,.3,1)';
-            card.style.boxShadow = pos===0 ? '0 8px 32px #0008' : '0 2px 8px #0003';
-            card.style.opacity = opacity;
-            // Imagen: usar splash de CommunityDragon si existe, si no, icono genérico
-            let splashUrl = '';
-            if (champData && champData.skins) {
-              // Buscar skin por nombre (sin .zip), con normalización flexible
-              function normalizeName(str) {
-                return str
-                  .replace(/\.zip$/i, '')
-                  .replace(/[_\-]/g, ' ')
-
-                  .replace(/k\s*da/gi, 'kda')
-                  .replace(/\s+/g, ' ')
-                  .replace(/[^a-z0-9 ]/gi, '')
-                  .toLowerCase()
-                  .trim();
-              }
-              let skinNameNorm = normalizeName(skin.name);
-              let cdSkin = champData.skins.find(s => normalizeName(s.name) === skinNameNorm);
-              if (!cdSkin) {
-                // Match parcial si no hay exacto
-                cdSkin = champData.skins.find(s => normalizeName(s.name).includes(skinNameNorm) || skinNameNorm.includes(normalizeName(s.name)));
-              }
-              if (cdSkin && cdSkin.splashPath) {
-                splashUrl = 'https://raw.communitydragon.org/latest' + cdSkin.splashPath.replace('/lol-game-data/assets/ASSETS/', '/plugins/rcp-be-lol-game-data/global/default/assets/').toLowerCase();
-              }
-            }
-            if (!splashUrl) splashUrl = 'https://static.wikia.nocookie.net/leagueoflegends/images/6/6e/Champion.png';
-            const img = document.createElement('img');
-            img.src = splashUrl;
-            img.alt = skin.name;
-            img.loading = 'lazy';
-            img.style.width = '100%';
-            img.style.height = imgHeight + 'px';
-            img.style.objectFit = 'cover';
-            img.style.borderTopLeftRadius = '16px';
-            img.style.borderTopRightRadius = '16px';
-            img.style.transition = 'height 0.5s cubic-bezier(.4,2,.3,1)';
-            img.onerror = function(){img.src='https://static.wikia.nocookie.net/leagueoflegends/images/6/6e/Champion.png';};
-            // Placeholder mientras carga
-            img.style.background = '#23272f url(https://i.imgur.com/llF5iyg.gif) center center no-repeat';
-            card.appendChild(img);
-            // Nombre
-            const name = document.createElement('div');
-            name.textContent = skin.name.replace(/\.zip$/i, '');
-            name.style.color = '#e0e0e0';
-            name.style.fontWeight = pos===0 ? 'bold' : 'normal';
-            name.style.fontSize = pos===0 ? '1.3rem' : '1.1rem';
-            name.className = 'text-center mb-2 mt-2';
-            card.appendChild(name);
-            // Botón
-            const btn = document.createElement('button');
-            btn.textContent = 'Descargar';
-            btn.className = 'btn btn-gold mb-3 px-4 py-2';
-            btn.style.fontSize = '1.1rem';
-            btn.onclick = async () => {
-              btn.disabled = true;
-              btn.textContent = 'Descargando...';
+          // Botón Chromas
+          if (chromasAvailable[skin.name]) {
+            const chromaBtn = document.createElement('button');
+            chromaBtn.textContent = 'Ver chromas';
+            chromaBtn.className = 'btn btn-gold mb-2 px-4 py-2';
+            chromaBtn.style.fontSize = '1.1rem';
+            chromaBtn.style.width = '100%';
+            chromaBtn.style.marginTop = '8px';
+            chromaBtn.onclick = async () => {
+              chromaBtn.disabled = true;
+              chromaBtn.textContent = 'Cargando chromas...';
+              const chromaFolderName = skin.name.replace(/\s*\d+\.zip$/i, '').replace(/\.zip$/i, '');
+              const chromaApiUrl = `https://api.github.com/repos/lingyRTX/lol-skins/contents/skins/${encodeURIComponent(champion)}/chromas/${encodeURIComponent(chromaFolderName)}`;
               try {
-                await window.skinsAPI.downloadSkin(skin.download_url, skin.name);
-                btn.textContent = 'Descargado';
+                const res = await fetchGithubCached(chromaApiUrl);
+                if (!res.ok) {
+                  alert('No se encontró la carpeta de chromas para esta skin.');
+                  chromaBtn.disabled = false;
+                  chromaBtn.textContent = 'Ver chromas';
+                  return;
+                }
+                let files = await res.json();
+                const readme = files.find(f => f.name.toLowerCase() === 'readme.md');
+                const chromaZips = files.filter(f => f.name.toLowerCase().endsWith('.zip'));
+                if (!readme) {
+                  alert('No se encontró el README.md de chromas para esta skin.');
+                  chromaBtn.disabled = false;
+                  chromaBtn.textContent = 'Ver chromas';
+                  return;
+                }
+                let chromaImages = [];
+                const readmeRes = await fetch(readme.download_url);
+                const readmeText = await readmeRes.text();
+                const lines = readmeText.split(/\r?\n/);
+                const chromaImagesArr = lines.filter (line => line.trimStart().startsWith('| !['));
+                chromaImages = chromaImagesArr.map(row => {
+                  const cols = row.split('|').map(c => c.trim());
+                  let imgMatch = cols[0] && cols[0].match(/!\[.*?\]\((.*?)\)/);
+                  if (!imgMatch) {
+                    const htmlImgMatch = row.match(/<img[^>]+src=['\"]([^'\"]+)['\"]/i);
+                    if (htmlImgMatch) imgMatch = [null, htmlImgMatch[1]];
+                  }
+                  return {
+                    id: cols[1],
+                    name: cols[2],
+                    img: imgMatch ? imgMatch[1] : null
+                  };
+                });
+                chromaImages = chromaImages.map(c => {
+                  if (c.id && c.id.startsWith('![') && c.name && /^\d+$/.test(c.name)) {
+                    return { id: c.name, name: c.name, img: c.id.match(/!\[.*?\]\((.*?)\)/)?.[1] || null };
+                  }
+                  return c;
+                });
+                showChromasModal(chromaFolderName, chromaZips, chromaImages);
               } catch (e) {
-                btn.textContent = 'Error';
-                alert('Error al descargar: ' + e.message);
+                alert(e.message || 'No hay chromas para esta skin.');
               }
-              setTimeout(() => {
-                btn.disabled = false;
-                btn.textContent = 'Descargar';
-              }, 2000);
-            };
-            card.appendChild(btn);
-            // Solo mostrar el botón "Ver chromas" si hay chromas disponibles para esta skin
-            if (chromasAvailable[skin.name]) {
-              const chromaBtn = document.createElement('button');
+              chromaBtn.disabled = false;
               chromaBtn.textContent = 'Ver chromas';
-              chromaBtn.className = 'btn btn-gold mb-2 px-4 py-2';
-              chromaBtn.style.fontSize = '1.1rem';
-              chromaBtn.style.width = '100%';
-              chromaBtn.style.marginTop = '8px';
-              chromaBtn.onclick = async () => {
-                chromaBtn.disabled = true;
-                chromaBtn.textContent = 'Cargando chromas...';
-                // Quitar número al final y .zip, igual que en findChromaFolder
-                const chromaFolderName = skin.name.replace(/\s*\d+\.zip$/i, '').replace(/\.zip$/i, '');
-                const chromaApiUrl = `https://api.github.com/repos/lingyRTX/lol-skins/contents/skins/${encodeURIComponent(champion)}/chromas/${encodeURIComponent(chromaFolderName)}`;
-                try {
-                  const res = await fetchGithubCached(chromaApiUrl);
-                  if (!res.ok) {
-                    alert('No se encontró la carpeta de chromas para esta skin.');
-                    chromaBtn.disabled = false;
-                    chromaBtn.textContent = 'Ver chromas';
-                    return;
-                  }
-                  let files = await res.json();
-                  // Buscar README.md y archivos .zip
-                  const readme = files.find(f => f.name.toLowerCase() === 'readme.md');
-                  const chromaZips = files.filter(f => f.name.toLowerCase().endsWith('.zip'));
-                  if (!readme) {
-                    alert('No se encontró el README.md de chromas para esta skin.');
-                    chromaBtn.disabled = false;
-                    chromaBtn.textContent = 'Ver chromas';
-                    return;
-                  }
-                  let chromaImages = [];
-                  const readmeRes = await fetch(readme.download_url);
-                  const readmeText = await readmeRes.text();
-                  // Parsear tabla soportando \n y \r\n
-                  const lines = readmeText.split(/\r?\n/);
-                  // Solo filas que empiezan con '| ![' (ignorando espacios antes del '|')
-                  const chromaImagesArr = lines.filter(line => line.trimStart().startsWith('| !['));
-                  chromaImages = chromaImagesArr.map(row => {
+            };
+            card.appendChild(chromaBtn);
+          }
+
+          // Previsualización de chromas
+          if (chromasAvailable[skin.name]) {
+            const chromaFolder = chromasAvailable[skin.name];
+            const chromasDiv = document.createElement('div');
+            chromasDiv.className = 'chromas-preview mb-2 w-100 d-flex flex-wrap justify-content-center';
+            chromasDiv.style.minHeight = '60px';
+            (async () => {
+              const chromaApiUrl = `https://api.github.com/repos/lingyRTX/lol-skins/contents/skins/${encodeURIComponent(champion)}/chromas/${encodeURIComponent(chromaFolder)}`;
+              try {
+                const res = await window.skinsAPI.fetchGithub(chromaApiUrl);
+                if (!res.ok) return;
+                const files = await res.json();
+                const readme = files.find(f => f.name.toLowerCase() === 'readme.md');
+                if (!readme) return;
+                const readmeRes = await fetch(readme.download_url);
+                const readmeText = await readmeRes.text();
+                const tableMatch = readmeText.match(/\|(.|\n)*?\|\n/g);
+                if (tableMatch) {
+                  const rows = tableMatch[0].trim().split('\n').slice(2);
+                  rows.forEach(row => {
                     const cols = row.split('|').map(c => c.trim());
-                    // Preview: columna 0 (cols[0]), Chroma ID: columna 1 (cols[1]), Name: columna 2 (cols[2])
                     let imgMatch = cols[0] && cols[0].match(/!\[.*?\]\((.*?)\)/);
                     if (!imgMatch) {
-                      // Busca <img src=\"...\"> (multilinea)
-                      const htmlImgMatch = row.match(/<img[^>]+src=['\"]([^'\"]+)['\"]/i);
+                      const htmlImgMatch = cols[0] && cols[0].match(/<img[^>]+src=['\"]([^'\"]+)['\"]/i);
                       if (htmlImgMatch) imgMatch = [null, htmlImgMatch[1]];
                     }
-                    return {
-                      id: cols[1],
-                      name: cols[2],
-                      img: imgMatch ? imgMatch[1] : null
-                    };
-                  });
-                  // Si el campo id contiene la imagen y name el número, intercambiar
-                  chromaImages = chromaImages.map(c => {
-                    if (c.id && c.id.startsWith('![') && c.name && /^\d+$/.test(c.name)) {
-                      return { id: c.name, name: c.name, img: c.id.match(/!\[.*?\]\((.*?)\)/)?.[1] || null };
+                    if (imgMatch) {
+                      const chromaImg = document.createElement('img');
+                      chromaImg.src = imgMatch[1];
+                      chromaImg.alt = cols[2] || '';
+                      chromaImg.title = cols[2] || '';
+                      chromaImg.style.width = '48px';
+                      chromaImg.style.height = '48px';
+                      chromaImg.style.objectFit = 'cover';
+                      chromaImg.style.borderRadius = '6px';
+                      chromaImg.style.margin = '2px 4px';
+                      chromaImg.loading = 'lazy';
+                      chromasDiv.appendChild(chromaImg);
                     }
-                    return c;
                   });
-                  showChromasModal(chromaFolderName, chromaZips, chromaImages);
-                } catch (e) {
-                  alert(e.message || 'No hay chromas para esta skin.');
                 }
-                chromaBtn.disabled = false;
-                chromaBtn.textContent = 'Ver chromas';
-              };
-              card.appendChild(chromaBtn);
-            }
-            // Si hay chromas, mostrar debajo del botón
-            if (chromasAvailable[skin.name]) {
-              const chromaFolder = chromasAvailable[skin.name];
-              const chromasDiv = document.createElement('div');
-              chromasDiv.className = 'chromas-preview mb-2 w-100 d-flex flex-wrap justify-content-center';
-              chromasDiv.style.minHeight = '60px';
-              // Cargar y mostrar chromas desde README.md
-              (async () => {
-                const chromaApiUrl = `https://api.github.com/repos/lingyRTX/lol-skins/contents/skins/${encodeURIComponent(champion)}/chromas/${encodeURIComponent(chromaFolder)}`;
-                try {
-                  const res = await window.skinsAPI.fetchGithub(chromaApiUrl);
-                  if (!res.ok) return;
-                  const files = await res.json();
-                  const readme = files.find(f => f.name.toLowerCase() === 'readme.md');
-                  if (!readme) return;
-                  const readmeRes = await fetch(readme.download_url);
-                  const readmeText = await readmeRes.text();
-                  // Extraer la tabla markdown de imágenes
-                  const tableMatch = readmeText.match(/\|(.|\n)*?\|\n/g);
-                  if (tableMatch) {
-                    const rows = tableMatch[0].trim().split('\n').slice(2); // Saltar cabecera y separador
-                    rows.forEach(row => {
-                      const cols = row.split('|').map(c => c.trim());
-                      // Soporta imagen markdown y HTML
-                      let imgMatch = cols[0] && cols[0].match(/!\[.*?\]\((.*?)\)/);
-                      if (!imgMatch) {
-                        const htmlImgMatch = cols[0] && cols[0].match(/<img[^>]+src=['\"]([^'\"]+)['\"]/i);
-                        if (htmlImgMatch) imgMatch = [null, htmlImgMatch[1]];
-                      }
-                      if (imgMatch) {
-                        const chromaImg = document.createElement('img');
-                        chromaImg.src = imgMatch[1];
-                        chromaImg.alt = cols[2] || '';
-                        chromaImg.title = cols[2] || '';
-                        chromaImg.style.width = '48px';
-                        chromaImg.style.height = '48px';
-                        chromaImg.style.objectFit = 'cover';
-                        chromaImg.style.borderRadius = '6px';
-                        chromaImg.style.margin = '2px 4px';
-                        chromaImg.loading = 'lazy';
-                        chromaImg.style.background = '#23272f url(https://i.imgur.com/llF5iyg.gif) center center no-repeat';
-                        chromasDiv.appendChild(chromaImg);
-                      }
-                    });
-                  }
-                } catch {}
-              })();
-              card.appendChild(chromasDiv);
-            }
-            cardsWrapper.appendChild(card);
-          });
-          // Dots
-          for(let i=0;i<max;i++){
-            const dot=document.createElement('span');
-            dot.style.width='12px';
-            dot.style.height='12px';
-            dot.style.borderRadius='50%';
-            dot.style.margin='0 4px';
-            dot.style.display='inline-block';
-            dot.style.background=i===current?'#f5c518':'#444';
-            dot.style.cursor='pointer';
-            dot.onclick=()=>{current=i;renderCarousel();};
-            dots.appendChild(dot);
+              } catch { }
+            })();
+            card.appendChild(chromasDiv);
           }
+          cardsWrapper.appendChild(card);
         }
-        prevBtn.onclick = () => {
-          current = (current - 1 + max) % max;
-          renderCarousel();
-        };
-        nextBtn.onclick = () => {
-          current = (current + 1) % max;
-          renderCarousel();
-        };
-        renderCarousel(chromasAvailable);
+        // Dots
+        for (let i = 0; i < max; i++) {
+          const dot = document.createElement('span');
+          dot.style.width = '12px';
+          dot.style.height = '12px';
+          dot.style.borderRadius = '50%';
+          dot.style.margin = '0 4px';
+          dot.style.display = 'inline-block';
+          dot.style.background = i === current ? '#c4a15b' : '#444';
+          dot.style.cursor = 'pointer';
+          dot.onclick = () => { current = i; renderCarousel(); };
+          dots.appendChild(dot);
+        }
       }
-      document.getElementById("backBtn").addEventListener("click", () => {
-        window.location.href = "index.html";
-      });
-      loadSkins();
-    </script>
-<!-- Modal para chromas -->
-<div class="modal fade" id="chromasModal" tabindex="-1" aria-labelledby="chromasModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content bg-dark-custom text-light">
-      <div class="modal-header">
-        <h5 class="modal-title" id="chromasModalLabel">Chromas</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body" id="chromasModalBody">
-        <!-- Aquí se cargan los chromas -->
+      prevBtn.onclick = () => { current = (current - 1 + max) % max; renderCarousel(); };
+      nextBtn.onclick = () => { current = (current + 1) % max; renderCarousel(); };
+      renderCarousel();
+    }
+
+    document.getElementById("backBtn").addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+    loadSkins();
+  </script>
+  <!-- Modal para chromas -->
+  <div class="modal fade" id="chromasModal" tabindex="-1" aria-labelledby="chromasModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content bg-dark-custom text-light">
+        <div class="modal-header">
+          <h5 class="modal-title" id="chromasModalLabel">Chromas</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body" id="chromasModalBody">
+          <!-- Aquí se cargan los chromas -->
+        </div>
       </div>
     </div>
   </div>
-</div>  
-<script>
-function showChromasModal(skinName, chromaZips, chromaImages) {
-  const body = document.getElementById('chromasModalBody');
-  let html = `<h5 class="mb-3">${skinName} - Chromas</h5>`;
-  if (!chromaZips.length) {
-    html += `<div class="text-warning">No hay chromas disponibles.</div>`;
-  } else {
-    html += `<div class="row">`;
-    chromaZips.forEach(zip => {
-      // Extrae el Chroma ID del nombre del zip (ej: "Mecha Aatrox 266004.zip")
-      const idMatch = zip.name.match(/(\d+)\.zip$/);
-      let img = '';
-      let found = null;
-      if (idMatch && chromaImages && chromaImages.length) {
-        // Comparar como string y sin espacios
-        found = chromaImages.find(c => c.id && String(c.id).replace(/\s/g, '') === String(idMatch[1]).replace(/\s/g, ''));
-      }
-      // Si no encontró por ID, intenta por nombre (sin número ni extensión)
-      if (!found && chromaImages && chromaImages.length) {
-        const zipBase = zip.name.replace(/\s*\d+\.zip$/i, '').replace(/\.zip$/i, '').toLowerCase();
-        found = chromaImages.find(c => c.name && c.name.toLowerCase().includes(zipBase));
-      }
-      if (found && found.img) {
-        img = `<img src="${found.img}" alt="${zip.name}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;" class="mb-2 d-block mx-auto">`;
+  <script>
+    function showChromasModal(skinName, chromaZips, chromaImages) {
+      const body = document.getElementById('chromasModalBody');
+      let html = `<h5 class="mb-3">${skinName} - Chromas</h5>`;
+      if (!chromaZips.length) {
+        html += `<div class="text-warning">No hay chromas disponibles.</div>`;
       } else {
-        img = `<div style="width:100px;height:100px;background:#333;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:2rem;" class="mb-2 mx-auto">?</div>`;
-      }
-      html += `
+        html += `<div class="row">`;
+        chromaZips.forEach(zip => {
+          // Extrae el Chroma ID del nombre del zip (ej: "Mecha Aatrox 266004.zip")
+          const idMatch = zip.name.match(/(\d+)\.zip$/);
+          let img = '';
+          let found = null;
+          if (idMatch && chromaImages && chromaImages.length) {
+            // Comparar como string y sin espacios
+            found = chromaImages.find(c => c.id && String(c.id).replace(/\s/g, '') === String(idMatch[1]).replace(/\s/g, ''));
+          }
+          // Si no encontró por ID, intenta por nombre (sin número ni extensión)
+          if (!found && chromaImages && chromaImages.length) {
+            const zipBase = zip.name.replace(/\s*\d+\.zip$/i, '').replace(/\.zip$/i, '').toLowerCase();
+            found = chromaImages.find(c => c.name && c.name.toLowerCase().includes(zipBase));
+          }
+          if (found && found.img) {
+            img = `<img src="${found.img}" alt="${zip.name}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;" class="mb-2 d-block mx-auto">`;
+          } else {
+            img = `<div style="width:100px;height:100px;background:#333;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:2rem;" class="mb-2 mx-auto">?</div>`;
+          }
+          html += `
         <div class="col-6 col-md-4 col-lg-3 text-center mb-3">
           ${img}
           <div style="font-size:0.95rem;">${zip.name.replace(/\.zip$/i, '')}</div>
           <button class="btn btn-gold btn-sm mt-1" onclick="downloadChromaZip('${zip.download_url.replace(/'/g, "\\'")}', '${zip.name.replace(/'/g, "\\'")}')">Descargar</button>
         </div>
       `;
-    });
-    html += `</div>`;
-  }
-  body.innerHTML = html;
-  const modal = new bootstrap.Modal(document.getElementById('chromasModal'));
-  modal.show();
-}
-// Descargar y extraer chroma zip automáticamente en la ruta predefinida
-async function downloadChromaZip(url, filename) {
-  try {
-    const btns = Array.from(document.querySelectorAll(`button[onclick*='${filename}']`));
-    btns.forEach(btn => { btn.disabled = true; btn.textContent = 'Descargando...'; });
-    await window.skinsAPI.downloadSkin(url, filename); // Usa el mismo método que para skins normales
-    btns.forEach(btn => { btn.textContent = 'Descargado'; });
-    setTimeout(() => {
-      btns.forEach(btn => { btn.disabled = false; btn.textContent = 'Descargar'; });
-    }, 2000);
-  } catch (e) {
-    alert('Error al descargar: ' + (e.message || e));
-    const btns = Array.from(document.querySelectorAll(`button[onclick*='${filename}']`));
-    btns.forEach(btn => { btn.disabled = false; btn.textContent = 'Descargar'; });
-  }
-}
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Eliminado: ya se pasa el token al inicio del script principal -->
+        });
+        html += `</div>`;
+      }
+      body.innerHTML = html;
+      const modal = new bootstrap.Modal(document.getElementById('chromasModal'));
+      modal.show();
+    }
+    // Descargar y extraer chroma zip automáticamente en la ruta predefinida
+    async function downloadChromaZip(url, filename) {
+      try {
+        const btns = Array.from(document.querySelectorAll(`button[onclick*='${filename}']`));
+        btns.forEach(btn => { btn.disabled = true; btn.textContent = 'Descargando...'; });
+        await window.skinsAPI.downloadSkin(url, filename); // Usa el mismo método que para skins normales
+        btns.forEach(btn => { btn.textContent = 'Descargado'; });
+        setTimeout(() => {
+          btns.forEach(btn => { btn.disabled = false; btn.textContent = 'Descargar'; });
+        }, 2000);
+      } catch (e) {
+        alert('Error al descargar: ' + (e.message || e));
+        const btns = Array.from(document.querySelectorAll(`button[onclick*='${filename}']`));
+        btns.forEach(btn => { btn.disabled = false; btn.textContent = 'Descargar'; });
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Eliminado: ya se pasa el token al inicio del script principal -->
 </body>
+
 </html>

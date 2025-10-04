@@ -1,32 +1,48 @@
-body {
-  background: #181a20;
-  color: #e0e0e0;
-  font-family: "Segoe UI", Arial, sans-serif;
+/* Nombre del campeón sobre la imagen con fondo blur */
+.champion-label-overlay {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgb(10, 10, 10);
+  color: #c4a15b;
+  font-weight: bold;
+  font-size: 1.3rem;
+  padding: 3px 100% 3px 100%;
+  z-index: 2;
+  text-align: center;
+  letter-spacing: 1.2px;
+  opacity: 90%;
 }
-.bg-dark-custom {
-  background: #23272f !important;
+body {
+  background: #181818;
+  color: #e0e0e0;
+  font-family: "Noto Sans KR", sans-serif;
+  display: block;
+  background-image: url("https://texturelabs.org/wp-content/uploads/Texturelabs_Sky_174S.jpg");
+  background-repeat: repeat; /* se repite tipo mosaico */
+  background-size: cover; /* cubre toda la pantalla */
+  background-attachment: fixed; /* hace que no se mueva al hacer scroll */
+  background-blend-mode: multiply;
 }
 .champion-card {
   background: #23272f;
   box-shadow: 0 2px 8px #0002;
   overflow: hidden;
-  transition: box-shadow 0.2s;
-  height: 360px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: stretch;
+  transition: box-shadow 4s, transform 0.4s;
+  height: 325px;
+  position: relative;
+  opacity: random(0% , 100%);
 }
 .champion-card img {
-  width: 100%;
-  height: 360px;
-  object-fit: fill;
+  object-fit: cover;
   background: #23272f;
   display: block;
+  height: 100%;
 }
 .champion-label {
   font-size: 20px;
-  color: #f5c518;
+  color: #c4a15b;
   font-weight: bold;
   text-align: center;
   background: #23272f;
@@ -36,15 +52,155 @@ body {
   border-bottom-right-radius: 12px;
 }
 .btn-gold {
-  background: #f5c518;
-  color: #23272f;
+  background: linear-gradient(66deg, #184f54, #034750, #033742, #184f54);
+  background-size: 240% 240%;
+  animation: gradient-animation 8s ease infinite;
+  opacity: 55%;
+  color: #000000;
   border: none;
   font-weight: bold;
+  transition: background 0.24s, color 0.24s, box-shadow 0.24s, transform 0.3s;
+}
+.btn-gold > span {
+  opacity: 80%;
+}
+.btn-gold > img {
+  padding: 1px;
+  height: 25px;
+  width: 25px;
 }
 .btn-gold:hover {
-  background: #ffe066;
-  color: #181a20;
+  color: #ffffff;
+  opacity: 85%;
+  transform: scale(1.06);
 }
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.btn-gold.active {
+  background: linear-gradient(
+    66deg,
+    #2a7c83,
+    /* más claro que #184f54 */ #056b78,
+    /* más claro que #034750 */ #045162,
+    /* más claro que #033742 */ #2a7c83
+  );
+  color: #f7f7f7 !important;
+  opacity: 100%;
+  animation: gradient-animation 2s ease infinite;
+}
+
 .champion-card:hover {
   box-shadow: 0 4px 30px 1px #e0e0e0;
+}
+/* Animación fade-in para las tarjetas */
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.champion-card {
+  animation: fadeInCard 0.7s ease;
+  transition: transform 0.4s, box-shadow 0.4s;
+}
+.champion-card:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 24px rgba(245, 197, 24, 0.2);
+  z-index: 2;
+}
+
+/* Animación para el modal */
+.modal.fade .modal-dialog {
+  transition: transform 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97), opacity 0.4s;
+  transform: translateY(-50px);
+  opacity: 0;
+}
+.modal.fade.show .modal-dialog {
+  transform: translateY(0);
+  opacity: 1;
+}
+.rol_icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  margin-left: 6px;
+  border-radius: 2px;
+}
+#championSearch {
+  width: 720px;
+  opacity: 85%;
+  transition: opacity 0.3s;
+}
+#championSearch:hover {
+  width: 730px;
+  opacity: 100%;
+}
+
+#scrollToTop {
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  z-index: 1000;
+  background: linear-gradient(
+    135deg,
+    #c4a15b 0%,
+    #eddc91 25%,
+    #c4a15b 50%,
+    #eddc91 75%,
+    #c4a15b 100%
+  );
+  color: #23272f;
+  border: none;
+
+  width: 52px;
+  height: 52px;
+  font-size: 2rem;
+  font-weight: bold;
+  box-shadow: 0 4px 16px #0006;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: 300% 300%;
+  animation: gradient-animation 7s ease infinite;
+}
+
+#scrollToTop:hover {
+  transform: scale(1.07);
+  box-shadow: 0 3px 12px #f8e369;
+}
+#settingsBtn {
+  background: linear-gradient(
+    135deg,
+    #8c6f3a 0%,
+    /* marrón dorado */ #b8a45f 25%,
+    /* dorado opaco */ #8c6f3a 50%,
+    #b8a45f 75%,
+    #8c6f3a 100%
+  );
+
+  margin: 2px;
+  font-weight: bold;
+  cursor: pointer;
+  background-size: 300% 300%;
+  animation: gradient-animation 20s ease infinite;
+  transition: transform 0.3s, box-shadow 0.3s;
+  border: 0px #000000;
+}
+#settingsBtn:hover {
+  transform: scale(1.02);
 }

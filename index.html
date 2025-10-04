@@ -1,89 +1,138 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
-    <title>LOL Skins Downloader</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="index.css" />
-    <!-- Objetos separados en archivos externos -->
-    <script src="championRoles.js"></script>
-    <script src="iconMap.js"></script>
-    <script src="loadscreenMap.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  <link rel="stylesheet" href="index.css" />
+  <script src="champIdMap.js"></script>
+  <script src="championRoles.js"></script>
+  <script src="iconMap.js"></script>
+  <script src="loadscreenMap.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
   </head>
   <body>
-    <div class="container py-4">
-      <h1 class="text-center fw-bold" style="color: #f5c518">Bienvenido a LOL Skins Downloader</h1>
+    <div class="container py-2 pt-3">
+      <h1 class="text-center fw-bold" id="titulo" style="color: #c4a15b">
+      LOL Skins Downloader
+      </h1>
+      <hr class="border border-warning-subtle border-1 opacity-60" />
       <div class="d-flex justify-content-between mb-4">
         <div>
-          <button id="settingsBtn" class="btn btn-secondary me-2">⚙ Ajustes</button>
-          <button id="changeDir" class="btn btn-gold px-4 py-2">Cambiar directorio de descarga</button>
+          <button id="settingsBtn" class="btn btn-secondary ">
+            <i class="bi bi-gear p-2 m-4"></i>
+          </button>
         </div>
       </div>
       <!-- Modal de Ajustes -->
-      <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+      <div
+        class="modal fade"
+        id="settingsModal"
+        tabindex="-1"
+        aria-labelledby="settingsModalLabel"
+        aria-hidden="true"
+      >
         <div class="modal-dialog">
           <div class="modal-content bg-dark-custom text-light">
             <div class="modal-header">
               <h5 class="modal-title" id="settingsModalLabel">Ajustes</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+                aria-label="Cerrar"
+              ></button>
             </div>
             <div class="modal-body">
-              <label for="githubToken" class="form-label">Token de GitHub:</label>
-              <input type="text" id="githubToken" class="form-control" placeholder="Pega aquí tu token personal" />
+              <label for="githubToken" class="form-label"
+                >Token de GitHub:</label
+              >
+              <input
+                type="text"
+                id="githubToken"
+                class="form-control"
+                placeholder="Pega aquí tu token personal"
+              />
             </div>
+            <button id="changeDir" class="btn btn-gold px-4 py-2">
+              Cambiar directorio de descarga
+            </button>
             <div class="modal-footer">
-              <button type="button" class="btn btn-gold" id="saveTokenBtn">Guardar</button>
+              <button type="button" class="btn btn-gold" id="saveTokenBtn">
+                Guardar
+              </button>
             </div>
           </div>
         </div>
       </div>
-      <h2 class="text-center fw-bold" style="color: #f5c518">Campeones</h2>
       <div class="d-flex flex-column align-items-center mb-2">
-        <div id="roleFilters" class="mb-2">
-          <button class="btn btn-gold me-2 mb-1" data-role="all">Todos</button>
-          <button class="btn btn-gold me-2 mb-1" data-role="top">Top</button>
-          <button class="btn btn-gold me-2 mb-1" data-role="jg">JG</button>
-          <button class="btn btn-gold me-2 mb-1" data-role="mid">Mid</button>
-          <button class="btn btn-gold me-2 mb-1" data-role="adc">ADC</button>
-          <button class="btn btn-gold me-2 mb-1" data-role="supp">Supp</button>
+        <div id="roleFilters" class="mb-3">
+          <button class="btn btn-gold me-2 mb-1 p-2" data-role="all">
+            <span>Todos </span><img class="rol_icon" src="icons/all.png" />
+          </button>
+          <button class="btn btn-gold me-2 mb-1 p-2" data-role="top">
+            <span>Top</span><img class="rol_icon" src="icons/top.png" />
+          </button>
+          <button class="btn btn-gold me-2 mb-1 p-2" data-role="jg">
+           <span> JG</span><img class="rol_icon" src="icons/jungla.png" />
+          </button>
+          <button class="btn btn-gold me-2 mb-1 p-2" data-role="mid">
+            <span>Mid</span><img class="rol_icon" src="icons/mid.png" />
+          </button>
+          <button class="btn btn-gold me-2 mb-1 p-2" data-role="adc">
+            <span>ADC</span><img class="rol_icon" src="icons/adc.png" />
+          </button>
+          <button class="btn btn-gold me-2 mb-1 p-2" data-role="supp">
+            <span>Supp</span> <img class="rol_icon" src="icons/supp.png" />
+          </button>
         </div>
-        <input id="championSearch" type="text" class="form-control w-50" placeholder="Buscar campeón..." style="max-width: 400px" />
+        <input
+          id="championSearch"
+          type="text"
+          class="form-control w-100 mb-3 p-2"
+          placeholder="Buscar campeón..."
+        />
       </div>
       <div id="championsGrid" class="row g-4 justify-content-center"></div>
-      <div id="skinsList" class="mt-4"></div>
+      <div id="skinsList" class="mt-5"></div>
     </div>
 
     <script>
-      // --- Estado global ---
+      // PASO CRÍTICO: pasar el token antes de cualquier fetch
+      const savedToken = localStorage.getItem("github_token");
+      if (savedToken) window.skinsAPI.setToken(savedToken);
+
+      // Mostrar grid de campeones
+
+      // Diccionario de roles por campeón (puedes ajustar según tus necesidades)
+      const championRoles = window.championRoles;
       let championsCache = [];
       let currentRole = "all";
-
-      // --- Utilidades ---
-      function normalizeChampionName(name) {
-        return name
-          .toLowerCase()
-          .replace(/á/g, "a")
-          .replace(/é/g, "e")
-          .replace(/í/g, "i")
-          .replace(/ó/g, "o")
-          .replace(/ú/g, "u")
-          .replace(/ñ/g, "n")
-          .replace(/[^a-z0-9]/g, "");
-      }
-
-      // --- Renderizado de campeones ---
       async function loadChampions(search = "", role = "all") {
         const grid = document.getElementById("championsGrid");
-        grid.innerHTML = "<p>Cargando...</p>";
         try {
           if (championsCache.length === 0) {
             championsCache = await window.skinsAPI.getChampions();
           }
-          const statusData = await window.skinsAPI.getChampionStatus();
-          const championRoles = window.championRoles;
+          // Diccionario de mapeo para iconos
           const iconMap = window.iconMap;
-          const loadscreenMap = window.loadscreenMap;
+          // Leer advertencias de status.json
+          const statusData = await window.skinsAPI.getChampionStatus();
+          // Diccionario de URLs personalizadas para loadscreens
 
+          // Diccionario de URLs personalizadas para loadscreens
+          const loadscreenMap = window.loadscreenMap;
+          // ...fin del objeto loadscreenMap correctamente definido...
+
+          // ...fin del objeto loadscreenMap correctamente definido...
+          // Filtrar campeones por búsqueda y rol
           let champions = championsCache.filter((name) =>
             name.toLowerCase().includes(search.toLowerCase())
           );
@@ -94,48 +143,57 @@
             });
           }
           grid.innerHTML = "";
-
+          // Función para normalizar nombres de campeón para la URL
+          function normalizeChampionName(name) {
+            return name
+              .toLowerCase()
+              .replace(/á/g, "a")
+              .replace(/é/g, "e")
+              .replace(/í/g, "i")
+              .replace(/ó/g, "o")
+              .replace(/ú/g, "u")
+              .replace(/ñ/g, "n")
+              .replace(/[^a-z0-9]/g, ""); // quita espacios, puntos, apóstrofes, etc.
+          }
           champions.forEach((name) => {
             let champKey = iconMap[name.toLowerCase()] || name;
-            let loadscreenUrl = loadscreenMap[name] ||
-              `https://raw.communitydragon.org/latest/game/assets/characters/${normalizeChampionName(name)}/skins/base/${normalizeChampionName(name)}loadscreen.png`;
-
-            const col = document.createElement("div");
-            col.className = "col-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center";
-            const card = document.createElement("div");
-            card.className = "champion-card card bg-dark-custom border-0 mb-2 position-relative";
-            card.style.width = "180px";
-            card.style.cursor = "pointer";
-
-            // Advertencia de status
-            if (statusData && statusData[name]) {
-              const alertDiv = document.createElement("div");
-              alertDiv.className = "alert alert-warning p-2 position-absolute top-0 end-0 m-2";
-              alertDiv.style.zIndex = 10;
-              let warnings = statusData[name];
-              if (!Array.isArray(warnings)) warnings = [warnings];
-              alertDiv.innerHTML = warnings.map(w => `<b>${w.skin}</b>: ${w.descripcion}`).join('<br><br>');
-              card.appendChild(alertDiv);
+            let loadscreenUrl;
+            if (loadscreenMap[name]) {
+              loadscreenUrl = loadscreenMap[name];
+            } else {
+              let autoName = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+              loadscreenUrl = `https://raw.communitydragon.org/latest/game/assets/characters/${autoName}/skins/base/${autoName}loadscreen.png`;
             }
+            const col = document.createElement("div");
+            col.className =
+              "col-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center";
+            const card = document.createElement("div");
+            card.className =
+              "champion-card card bg-dark-custom border-0 mb-1 mt-1 position-relative";
+            card.style.width = "170px";
+            card.style.height = "100%";
+            card.style.cursor = "pointer";
 
             const img = document.createElement("img");
             img.src = loadscreenUrl;
             img.alt = name;
             img.className = "card-img-top";
             img.onerror = function () {
-              img.src = "https://static.wikia.nocookie.net/leagueoflegends/images/6/6e/Champion.png";
+              img.src =
+                "https://static.wikia.nocookie.net/leagueoflegends/images/6/6e/Champion.png";
             };
             card.appendChild(img);
-
-            const label = document.createElement("div");
-            label.textContent = champKey;
-            label.className = "champion-label card-footer text-center";
-            card.appendChild(label);
-
+            // Nombre del campeón sobre la imagen con fondo blur
+            const labelOverlay = document.createElement("div");
+            labelOverlay.textContent = champKey;
+            labelOverlay.className = "champion-label-overlay";
+            card.appendChild(labelOverlay);
             card.addEventListener("click", () => {
-              window.location.href = `skins.html?champion=${encodeURIComponent(normalizeChampionName(name))}`;
+              // Pasar el nombre normalizado por la URL, pero mostrar el nombre real en skins.html
+              window.location.href = `skins.html?champion=${encodeURIComponent(
+                normalizeChampionName(name)
+              )}`;
             });
-
             col.appendChild(card);
             grid.appendChild(col);
           });
@@ -144,52 +202,125 @@
         }
       }
 
-      // --- Inicialización de eventos ---
-      function initEvents() {
+      // Inicializar y conectar barra de búsqueda y botones de rol
+      document.addEventListener("DOMContentLoaded", () => {
         const searchInput = document.getElementById("championSearch");
         if (searchInput) {
           searchInput.addEventListener("input", (e) => {
             loadChampions(e.target.value, currentRole);
           });
         }
-        document.querySelectorAll('#roleFilters button').forEach(btn => {
-          btn.addEventListener('click', function() {
-            document.querySelectorAll('#roleFilters button').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            currentRole = this.getAttribute('data-role');
+        // Botones de filtro de rol
+        document.querySelectorAll("#roleFilters button").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            document
+              .querySelectorAll("#roleFilters button")
+              .forEach((b) => b.classList.remove("active"));
+            this.classList.add("active");
+            currentRole = this.getAttribute("data-role");
             loadChampions(searchInput.value, currentRole);
           });
         });
-        document.querySelector('#roleFilters button[data-role="all"]').classList.add('active');
+        // Marcar "Todos" como activo al inicio
+        document
+          .querySelector('#roleFilters button[data-role="all"]')
+          .classList.add("active");
+        loadChampions();
+      });
 
-        document.getElementById("changeDir").addEventListener("click", async () => {
+      // Cambiar directorio de descarga
+      document
+        .getElementById("changeDir")
+        .addEventListener("click", async () => {
           const dir = await window.skinsAPI.changeDownloadDir();
-          if (dir) alert("Directorio cambiado a: " + dir);
+          if (dir) {
+            alert("Directorio cambiado a: " + dir);
+          }
         });
+      document.getElementById("settingsBtn").addEventListener("click", () => {
+        const modal = new bootstrap.Modal(
+          document.getElementById("settingsModal")
+        );
+        // Cargar token guardado si existe
+        document.getElementById("githubToken").value =
+          localStorage.getItem("github_token") || "";
+        modal.show();
+      });
 
-        document.getElementById("settingsBtn").addEventListener("click", () => {
-          const modal = new bootstrap.Modal(document.getElementById('settingsModal'));
-          document.getElementById("githubToken").value = localStorage.getItem("github_token") || "";
-          modal.show();
-        });
+      document.getElementById("saveTokenBtn").addEventListener("click", () => {
+        const token = document.getElementById("githubToken").value.trim();
+        localStorage.setItem("github_token", token);
+        // Después de guardar el token:
+        window.skinsAPI.setToken(token);
+        alert("Guardado correctamente.");
+        bootstrap.Modal.getInstance(
+          document.getElementById("settingsModal")
+        ).hide();
+      });
 
-        document.getElementById("saveTokenBtn").addEventListener("click", () => {
-          const token = document.getElementById("githubToken").value.trim();
-          localStorage.setItem("github_token", token);
-          window.skinsAPI.setToken(token);
-          alert("Token guardado correctamente.");
-          bootstrap.Modal.getInstance(document.getElementById('settingsModal')).hide();
-        });
-      }
-
-      // --- Inicialización principal ---
+      // Al cargar la página, pasar el token guardado a preload.js
       document.addEventListener("DOMContentLoaded", () => {
         const savedToken = localStorage.getItem("github_token");
         if (savedToken) window.skinsAPI.setToken(savedToken);
-        initEvents();
-        loadChampions();
+
+        // Detección automática de campeón pickeado cada 3 segundos
+        let lastChampionId = null;
+        setInterval(() => {
+          window.skinsAPI.getPickedChampion().then(data => {
+            console.log('Resultado getPickedChampion:', data);
+            if (data && data.championId && data.championId !== lastChampionId) {
+              lastChampionId = data.championId;
+              // Verificar que champIdMap está definido y es un objeto
+              const champIdMap = window.champIdMap;
+              if (!champIdMap || typeof champIdMap !== 'object') {
+                console.error('[SkinsDownloader] champIdMap no está definido. Verifica que champIdMap.js se cargue antes que este script.');
+                return;
+              }
+              let champName = null;
+              for (const [name, id] of Object.entries(champIdMap)) {
+                if (id == data.championId) {
+                  champName = name;
+                  break;
+                }
+              }
+              if (champName) {
+                // Normalizar el nombre para la URL
+                const normalizeChampionName = (name) => name.toLowerCase().replace(/á/g, "a").replace(/é/g, "e").replace(/í/g, "i").replace(/ó/g, "o").replace(/ú/g, "u").replace(/ñ/g, "n").replace(/[^a-z0-9]/g, "");
+                window.location.href = `skins.html?champion=${encodeURIComponent(normalizeChampionName(champName))}`;
+              } else {
+                console.warn('[SkinsDownloader] No se encontró el nombre del campeón para el ID:', data.championId);
+              }
+            }
+          });
+        }, 3000);
       });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      
+      window.onscroll = function () {
+        const button = document.getElementById("scrollToTop");
+
+        // Cambia el valor 200 por el desplazamiento deseado para mostrar el botón
+        if (
+          document.body.scrollTop > 400 ||
+          document.documentElement.scrollTop > 500
+        ) {
+          button.style.display = "block"; // Muestra el botón
+        } else {
+          button.style.display = "none"; // Oculta el botón
+        }
+      };
+
+      function scrollToTop() {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+    </script>
+    <a href="#settingsBtn">
+      <button id="scrollToTop" style="display: none">↑</button></a
+    >
   </body>
 </html>
